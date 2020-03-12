@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecHolidayInfoMapper">
+    
+    <resultMap type="RecHolidayInfo" id="RecHolidayInfoResult"><!--~--><!--~columnBegin-->
+        <result property="holidayInfoId"    column="holiday_info_id"    /><!--~holiday_info_id-->
+        <result property="holiday"    column="holiday"    /><!--~holiday-->
+        <result property="holidayName"    column="holiday_name"    /><!--~holiday_name-->
+        <result property="holidayScript"    column="holiday_script"    /><!--~holiday_script-->
+    </resultMap>
+
+    <sql id="selectRecHolidayInfoVo">
+        select holiday_info_id, holiday, holiday_name, holiday_script from rec_holiday_info
+    </sql>
+
+    <select id="selectRecHolidayInfoList" parameterType="RecHolidayInfo" resultMap="RecHolidayInfoResult">
+        <include refid="selectRecHolidayInfoVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="holiday != null "> and holiday = #{holiday}</if><!--~holiday_select-->
+            <if test="holidayName != null  and holidayName != ''"> and holiday_name like concat('%', #{holidayName}, '%')</if><!--~holiday_name_select-->
+            <if test="holidayScript != null  and holidayScript != ''"> and holiday_script = #{holidayScript}</if><!--~holiday_script_select-->
+        </where>
+    </select>
+    
+    <select id="selectRecHolidayInfoById" parameterType="Long" resultMap="RecHolidayInfoResult">
+        <include refid="selectRecHolidayInfoVo"/>
+        where holiday_info_id = #{holidayInfoId}
+    </select>
+        
+    <insert id="insertRecHolidayInfo" parameterType="RecHolidayInfo" useGeneratedKeys="true" keyProperty="holidayInfoId">
+        insert into rec_holiday_info
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="holiday != null ">holiday,</if><!--~holiday_insert1-->
+            <if test="holidayName != null  and holidayName != ''">holiday_name,</if><!--~holiday_name_insert1-->
+            <if test="holidayScript != null  and holidayScript != ''">holiday_script,</if><!--~holiday_script_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="holiday != null ">#{holiday},</if><!--~holiday_insert2-->
+            <if test="holidayName != null  and holidayName != ''">#{holidayName},</if><!--~holiday_name_insert2-->
+            <if test="holidayScript != null  and holidayScript != ''">#{holidayScript},</if><!--~holiday_script_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateRecHolidayInfo" parameterType="RecHolidayInfo">
+        update rec_holiday_info
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="holiday != null ">holiday = #{holiday},</if><!--~holiday_update-->
+            <if test="holidayName != null  and holidayName != ''">holiday_name = #{holidayName},</if><!--~holiday_name_update-->
+            <if test="holidayScript != null  and holidayScript != ''">holiday_script = #{holidayScript},</if><!--~holiday_script_update-->
+        </trim>
+        where holiday_info_id = #{holidayInfoId}
+    </update>
+
+    <delete id="deleteRecHolidayInfoById" parameterType="Long">
+        delete from rec_holiday_info where holiday_info_id = #{holidayInfoId}
+    </delete>
+
+    <delete id="deleteRecHolidayInfoByIds" parameterType="String">
+        delete from rec_holiday_info where holiday_info_id in 
+        <foreach item="holidayInfoId" collection="array" open="(" separator="," close=")">
+            #{holidayInfoId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

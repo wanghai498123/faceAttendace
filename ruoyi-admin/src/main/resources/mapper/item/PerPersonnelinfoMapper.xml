@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.PerPersonnelinfoMapper">
+
+    <resultMap type="PerPersonnelinfo" id="PerPersonnelinfoResult"><!--~--><!--~columnBegin-->
+        <result property="personnelId"    column="personnel_id"    /><!--~personnel_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="personnelName"    column="personnel_name"    /><!--~personnel_name-->
+        <result property="cardNumber"    column="card_number"    /><!--~card_number-->
+        <result property="idNumber"    column="id_number"    /><!--~id_number-->
+        <result property="birthday"    column="birthday"    /><!--~birthday-->
+        <result property="sex"    column="sex"    /><!--~sex-->
+        <result property="contact"    column="contact"    /><!--~contact-->
+        <result property="province"    column="province"    /><!--~province-->
+        <result property="city"    column="city"    /><!--~city-->
+        <result property="region"    column="region"    /><!--~region-->
+        <result property="fullAddress"    column="full_address"    /><!--~full_address-->
+        <result property="personnelType"    column="personnel_type"    /><!--~personnel_type-->
+        <result property="postId"    column="post_id"    /><!--~post_id-->
+        <result property="keyJob"    column="key_job"    /><!--~key_job-->
+        <result property="dutyTime"    column="duty_time"    /><!--~duty_time-->
+        <result property="approachTime"    column="approach_time"    /><!--~approach_time-->
+        <result property="validity"    column="validity"    /><!--~validity-->
+        <result property="dataDissemination"    column="data_dissemination"    /><!--~data_dissemination-->
+        <result property="facePath"    column="face_path"    /><!--~face_path-->
+        <result property="certificatePath"    column="certificate_path"    /><!--~certificate_path-->
+        <result property="incumbency"    column="incumbency"    /><!--~incumbency-->
+        <result property="dataState"    column="data_state"    /><!--~data_state-->
+        <result property="avatar"    column="avatar"    /><!--~avatar-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectPerPersonnelinfoVo">
+        select personnel_id, u.dept_id, personnel_name, card_number, id_number, birthday, sex, contact, province, city, region, full_address, personnel_type, post_id, key_job, duty_time, approach_time, validity, data_dissemination, face_path, certificate_path, incumbency, data_state, avatar,
+        d.dept_name
+        from per_personnelinfo u join sys_dept d  on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectPerPersonnelinfoList" parameterType="PerPersonnelinfo" resultMap="PerPersonnelinfoResult">
+        <include refid="selectPerPersonnelinfoVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="personnelName != null  and personnelName != ''"> and personnel_name like concat('%', #{personnelName}, '%')</if><!--~personnel_name_select-->
+            <if test="cardNumber != null  and cardNumber != ''"> and card_number = #{cardNumber}</if><!--~card_number_select-->
+            <if test="idNumber != null  and idNumber != ''"> and id_number = #{idNumber}</if><!--~id_number_select-->
+            <if test="birthday != null"> and birthday = #{birthday}</if><!--~birthday_select-->
+            <if test="sex != null  and sex != ''"> and sex = #{sex}</if><!--~sex_select-->
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if><!--~contact_select-->
+            <if test="province != null  and province != ''"> and province = #{province}</if><!--~province_select-->
+            <if test="city != null  and city != ''"> and city = #{city}</if><!--~city_select-->
+            <if test="region != null  and region != ''"> and region = #{region}</if><!--~region_select-->
+            <if test="fullAddress != null  and fullAddress != ''"> and full_address = #{fullAddress}</if><!--~full_address_select-->
+            <if test="personnelType != null  and personnelType != ''"> and personnel_type = #{personnelType}</if><!--~personnel_type_select-->
+            <if test="postId != null  and postId != ''"> and post_id = #{postId}</if><!--~post_id_select-->
+            <if test="keyJob != null  and keyJob != ''"> and key_job = #{keyJob}</if><!--~key_job_select-->
+            <if test="dutyTime != null "> and duty_time = #{dutyTime}</if><!--~duty_time_select-->
+            <if test="approachTime != null "> and approach_time = #{approachTime}</if><!--~approach_time_select-->
+            <if test="validity != null "> and validity = #{validity}</if><!--~validity_select-->
+            <if test="dataDissemination != null  and dataDissemination != ''"> and data_dissemination = #{dataDissemination}</if><!--~data_dissemination_select-->
+            <if test="facePath != null  and facePath != ''"> and face_path = #{facePath}</if><!--~face_path_select-->
+            <if test="certificatePath != null  and certificatePath != ''"> and certificate_path = #{certificatePath}</if><!--~certificate_path_select-->
+            <if test="incumbency != null  and incumbency != ''"> and incumbency = #{incumbency}</if><!--~incumbency_select-->
+            <if test="dataState != null  and dataState != ''"> and data_state = #{dataState}</if><!--~data_state_select-->
+            <if test="avatar != null  and avatar != ''"> and avatar = #{avatar}</if><!--~avatar_select-->
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+
+    <select id="selectPerPersonnelinfoById" parameterType="Long" resultMap="PerPersonnelinfoResult">
+        <include refid="selectPerPersonnelinfoVo"/>
+        where personnel_id = #{personnelId}
+    </select>
+
+    <insert id="insertPerPersonnelinfo" parameterType="PerPersonnelinfo" useGeneratedKeys="true" keyProperty="personnelId">
+        insert into per_personnelinfo
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="personnelName != null  and personnelName != ''">personnel_name,</if><!--~personnel_name_insert1-->
+            <if test="cardNumber != null  and cardNumber != ''">card_number,</if><!--~card_number_insert1-->
+            <if test="idNumber != null  and idNumber != ''">id_number,</if><!--~id_number_insert1-->
+            <if test="birthday != null">birthday,</if><!--~birthday_insert1-->
+            <if test="sex != null  and sex != ''">sex,</if><!--~sex_insert1-->
+            <if test="contact != null  and contact != ''">contact,</if><!--~contact_insert1-->
+            <if test="province != null  and province != ''">province,</if><!--~province_insert1-->
+            <if test="city != null  and city != ''">city,</if><!--~city_insert1-->
+            <if test="region != null  and region != ''">region,</if><!--~region_insert1-->
+            <if test="fullAddress != null  and fullAddress != ''">full_address,</if><!--~full_address_insert1-->
+            <if test="personnelType != null  and personnelType != ''">personnel_type,</if><!--~personnel_type_insert1-->
+            <if test="postId != null  and postId != ''">post_id,</if><!--~post_id_insert1-->
+            <if test="keyJob != null  and keyJob != ''">key_job,</if><!--~key_job_insert1-->
+            <if test="dutyTime != null ">duty_time,</if><!--~duty_time_insert1-->
+            <if test="approachTime != null ">approach_time,</if><!--~approach_time_insert1-->
+            <if test="validity != null ">validity,</if><!--~validity_insert1-->
+            <if test="dataDissemination != null  and dataDissemination != ''">data_dissemination,</if><!--~data_dissemination_insert1-->
+            <if test="facePath != null  and facePath != ''">face_path,</if><!--~face_path_insert1-->
+            <if test="certificatePath != null  and certificatePath != ''">certificate_path,</if><!--~certificate_path_insert1-->
+            <if test="incumbency != null  and incumbency != ''">incumbency,</if><!--~incumbency_insert1-->
+            <if test="dataState != null  and dataState != ''">data_state,</if><!--~data_state_insert1-->
+            <if test="avatar != null  and avatar != ''">avatar,</if><!--~avatar_insert1-->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="personnelName != null  and personnelName != ''">#{personnelName},</if><!--~personnel_name_insert2-->
+            <if test="cardNumber != null  and cardNumber != ''">#{cardNumber},</if><!--~card_number_insert2-->
+            <if test="idNumber != null  and idNumber != ''">#{idNumber},</if><!--~id_number_insert2-->
+            <if test="birthday != null">#{birthday},</if><!--~birthday_insert2-->
+            <if test="sex != null  and sex != ''">#{sex},</if><!--~sex_insert2-->
+            <if test="contact != null  and contact != ''">#{contact},</if><!--~contact_insert2-->
+            <if test="province != null  and province != ''">#{province},</if><!--~province_insert2-->
+            <if test="city != null  and city != ''">#{city},</if><!--~city_insert2-->
+            <if test="region != null  and region != ''">#{region},</if><!--~region_insert2-->
+            <if test="fullAddress != null  and fullAddress != ''">#{fullAddress},</if><!--~full_address_insert2-->
+            <if test="personnelType != null  and personnelType != ''">#{personnelType},</if><!--~personnel_type_insert2-->
+            <if test="postId != null  and postId != ''">#{postId},</if><!--~post_id_insert2-->
+            <if test="keyJob != null  and keyJob != ''">#{keyJob},</if><!--~key_job_insert2-->
+            <if test="dutyTime != null ">#{dutyTime},</if><!--~duty_time_insert2-->
+            <if test="approachTime != null ">#{approachTime},</if><!--~approach_time_insert2-->
+            <if test="validity != null ">#{validity},</if><!--~validity_insert2-->
+            <if test="dataDissemination != null  and dataDissemination != ''">#{dataDissemination},</if><!--~data_dissemination_insert2-->
+            <if test="facePath != null  and facePath != ''">#{facePath},</if><!--~face_path_insert2-->
+            <if test="certificatePath != null  and certificatePath != ''">#{certificatePath},</if><!--~certificate_path_insert2-->
+            <if test="incumbency != null  and incumbency != ''">#{incumbency},</if><!--~incumbency_insert2-->
+            <if test="dataState != null  and dataState != ''">#{dataState},</if><!--~data_state_insert2-->
+            <if test="avatar != null  and avatar != ''">#{avatar},</if><!--~avatar_insert2-->
+        </trim>
+    </insert>
+
+    <update id="updatePerPersonnelinfo" parameterType="PerPersonnelinfo">
+        update per_personnelinfo
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="personnelName != null  and personnelName != ''">personnel_name = #{personnelName},</if><!--~personnel_name_update-->
+            <if test="cardNumber != null  and cardNumber != ''">card_number = #{cardNumber},</if><!--~card_number_update-->
+            <if test="idNumber != null  and idNumber != ''">id_number = #{idNumber},</if><!--~id_number_update-->
+            <if test="birthday != null">birthday = #{birthday},</if><!--~birthday_update-->
+            <if test="sex != null  and sex != ''">sex = #{sex},</if><!--~sex_update-->
+            <if test="contact != null  and contact != ''">contact = #{contact},</if><!--~contact_update-->
+            <if test="province != null  and province != ''">province = #{province},</if><!--~province_update-->
+            <if test="city != null  and city != ''">city = #{city},</if><!--~city_update-->
+            <if test="region != null  and region != ''">region = #{region},</if><!--~region_update-->
+            <if test="fullAddress != null  and fullAddress != ''">full_address = #{fullAddress},</if><!--~full_address_update-->
+            <if test="personnelType != null  and personnelType != ''">personnel_type = #{personnelType},</if><!--~personnel_type_update-->
+            <if test="postId != null  and postId != ''">post_id = #{postId},</if><!--~post_id_update-->
+            <if test="keyJob != null  and keyJob != ''">key_job = #{keyJob},</if><!--~key_job_update-->
+            <if test="dutyTime != null ">duty_time = #{dutyTime},</if><!--~duty_time_update-->
+            <if test="approachTime != null ">approach_time = #{approachTime},</if><!--~approach_time_update-->
+            <if test="validity != null ">validity = #{validity},</if><!--~validity_update-->
+            <if test="dataDissemination != null  and dataDissemination != ''">data_dissemination = #{dataDissemination},</if><!--~data_dissemination_update-->
+            <if test="facePath != null  and facePath != ''">face_path = #{facePath},</if><!--~face_path_update-->
+            <if test="certificatePath != null  and certificatePath != ''">certificate_path = #{certificatePath},</if><!--~certificate_path_update-->
+            <if test="incumbency != null  and incumbency != ''">incumbency = #{incumbency},</if><!--~incumbency_update-->
+            <if test="dataState != null  and dataState != ''">data_state = #{dataState},</if><!--~data_state_update-->
+            <if test="avatar != null  and avatar != ''">avatar = #{avatar},</if><!--~avatar_update-->
+        </trim>
+        where personnel_id = #{personnelId}
+    </update>
+
+    <delete id="deletePerPersonnelinfoById" parameterType="Long">
+        delete from per_personnelinfo where personnel_id = #{personnelId}
+    </delete>
+
+    <delete id="deletePerPersonnelinfoByIds" parameterType="String">
+        delete from per_personnelinfo where personnel_id in
+        <foreach item="personnelId" collection="array" open="(" separator="," close=")">
+            #{personnelId}
+        </foreach>
+    </delete>
+
+</mapper>

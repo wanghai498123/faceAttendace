@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.generator.mapper.GenTableActionMapper">
+
+
+	<resultMap type="GenTableAction" id="GenTableActionResult">
+		<result property="actionId"    column="action_id"    /><!--~action_id-->
+		<result property="tableId"    column="table_id"    /><!--~table_id-->
+		<result property="actionName"    column="action_name"    /><!--~action_name-->
+		<result property="actionComment"    column="action_comment"    /><!--~action_comment-->
+		<result property="mouldName"    column="mould_name"    /><!--~mould_name-->
+		<result property="mouldComment"    column="mould_comment"    /><!--~mould_comment-->
+		<result property="columnIndex"    column="column_index"    /><!--~column_index-->
+		<result property="isController"    column="is_controller"    /><!--~is_view-->
+		<result property="isView"    column="is_view"    /><!--~is_view-->
+		<result property="isService"    column="is_service"    /><!--~is_service-->
+		<result property="isDao"    column="is_dao"    /><!--~is_dao-->
+		<result property="isPermissions"    column="is_permissions"    /><!--~is_permissions-->
+		<result property="isLog"    column="is_log"    /><!--~is_log-->
+		<result property="isGen"    column="is_gen"    /><!--~is_gen-->
+	</resultMap>
+
+	<sql id="selectGenTableActionVo">
+		select action_id, table_id, action_name, action_comment, mould_name, mould_comment, column_index, is_view, is_service, is_dao, is_controller, is_permissions, is_log, is_gen from gen_table_action
+	</sql>
+
+	<select id="selectGenTableColumnListByTableId" parameterType="Long" resultMap="GenTableActionResult">
+		<include refid="selectGenTableActionVo"/>
+		where table_id = #{tableId}
+		order by sort
+	</select>
+
+	<select id="selectDbTableActionById" parameterType="Long" resultMap="GenTableActionResult">
+		<include refid="selectGenTableActionVo"/>
+		where action_id = #{actionId}
+	</select>
+
+	<select id="selectGenTableActionList" parameterType="GenTableAction" resultMap="GenTableActionResult">
+		<include refid="selectGenTableActionVo"/>
+		<where><!--~actionId_select-->
+			<if test="tableId != null  and tableId != ''"> and table_id = #{tableId}</if><!--~table_id_select-->
+			<if test="actionName != null  and actionName != ''"> and action_name like concat('%', #{actionName}, '%')</if><!--~action_name_select-->
+			<if test="actionComment != null  and actionComment != ''"> and action_comment = #{actionComment}</if><!--~action_comment_select-->
+			<if test="mouldName != null  and mouldName != ''"> and mould_name like concat('%', #{mouldName}, '%')</if><!--~mould_name_select-->
+			<if test="mouldComment != null  and mouldComment != ''"> and mould_comment = #{mouldComment}</if><!--~mould_comment_select-->
+			<if test="columnIndex != null "> and column_index = #{columnIndex}</if><!--~column_index_select-->
+			<if test="isView != null  and isView != ''"> and is_view = #{isView}</if><!--~is_view_select-->
+			<if test="isService != null  and isService != ''"> and is_service = #{isService}</if><!--~is_service_select-->
+			<if test="isDao != null  and isDao != ''"> and is_dao = #{isDao}</if><!--~is_dao_select-->
+			<if test="isController != null  and isController != ''"> and is_controller = #{isController}</if><!--~is_view_select-->
+			<if test="isPermissions != null  and isPermissions != ''"> and is_permissions = #{isPermissions}</if><!--~is_permissions_select-->
+			<if test="isLog != null  and isLog != ''"> and is_log = #{isLog}</if><!--~is_log_select-->
+			<if test="isGen != null  and isGen != ''"> and is_gen = #{isGen}</if><!--~is_gen_select-->
+		</where>
+	</select>
+
+	<select id="selectGenTableActionById" parameterType="Long" resultMap="GenTableActionResult">
+		<include refid="selectGenTableActionVo"/>
+		where action_id = #{actionId}
+	</select>
+
+	<insert id="insertGenTableAction" parameterType="GenTableAction" useGeneratedKeys="true" keyProperty="actionId">
+		insert into gen_table_action
+		<trim prefix="(" suffix=")" suffixOverrides=","><!--~action_id_insert1-->
+			<if test="tableId != null  and tableId != ''">table_id,</if><!--~table_id_insert1-->
+			<if test="actionName != null  and actionName != ''">action_name,</if><!--~action_name_insert1-->
+			<if test="actionComment != null  and actionComment != ''">action_comment,</if><!--~action_comment_insert1-->
+			<if test="mouldName != null  and mouldName != ''">mould_name,</if><!--~mould_name_insert1-->
+			<if test="mouldComment != null  and mouldComment != ''">mould_comment,</if><!--~mould_comment_insert1-->
+			<if test="columnIndex != null ">column_index,</if><!--~column_index_insert1-->
+			<if test="isView != null  and isView != ''">is_view,</if><!--~is_view_insert1-->
+			<if test="isService != null  and isService != ''">is_service,</if><!--~is_service_insert1-->
+			<if test="isDao != null  and isDao != ''">is_dao,</if><!--~is_dao_insert1-->
+			<if test="isController != null  and isController != ''">is_controller,</if><!--~is_view_insert1-->
+			<if test="isPermissions != null  and isPermissions != ''">is_permissions,</if><!--~is_permissions_insert1-->
+			<if test="isLog != null  and isLog != ''">is_log,</if><!--~is_log_insert1-->
+			<if test="isGen != null  and isGen != ''">is_gen,</if><!--~is_gen_insert1-->
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=","><!--~actionId_insert2-->
+			<if test="tableId != null  and tableId != ''">#{tableId},</if><!--~table_id_insert2-->
+			<if test="actionName != null  and actionName != ''">#{actionName},</if><!--~action_name_insert2-->
+			<if test="actionComment != null  and actionComment != ''">#{actionComment},</if><!--~action_comment_insert2-->
+			<if test="mouldName != null  and mouldName != ''">#{mouldName},</if><!--~mould_name_insert2-->
+			<if test="mouldComment != null  and mouldComment != ''">#{mouldComment},</if><!--~mould_comment_insert2-->
+			<if test="columnIndex != null ">#{columnIndex},</if><!--~column_index_insert2-->
+			<if test="isView != null  and isView != ''">#{isView},</if><!--~is_view_insert2-->
+			<if test="isService != null  and isService != ''">#{isService},</if><!--~is_service_insert2-->
+			<if test="isDao != null  and isDao != ''">#{isDao},</if><!--~is_dao_insert2-->
+			<if test="isController != null  and isController != ''">#{isController},</if><!--~is_view_insert2-->
+			<if test="isPermissions != null  and isPermissions != ''">#{isPermissions},</if><!--~is_permissions_insert2-->
+			<if test="isLog != null  and isLog != ''">#{isLog},</if><!--~is_log_insert2-->
+			<if test="isGen != null  and isGen != ''">#{isGen},</if><!--~is_gen_insert2-->
+		</trim>
+	</insert>
+
+	<update id="updateGenTableAction" parameterType="GenTableAction">
+		update gen_table_action
+		<trim prefix="SET" suffixOverrides=","><!--~action_id_update-->
+			<if test="tableId != null  and tableId != ''">table_id = #{tableId},</if><!--~table_id_update-->
+			action_name = #{actionName},
+			action_comment = #{actionComment},
+			mould_name = #{mouldName},
+			mould_comment = #{mouldComment},
+			column_index = #{columnIndex},
+			is_view = #{isView},
+			is_service = #{isService},
+			is_dao = #{isDao},
+			is_controller = #{isController},
+			is_permissions = #{isPermissions},
+			is_log = #{isLog},
+			is_gen = #{isGen},
+		</trim>
+		where action_id = #{actionId}
+	</update>
+
+	<delete id="deleteGenTableActionByIds" parameterType="Long">
+		delete from gen_table_action where table_id in
+		<foreach collection="array" item="tableId" open="(" separator="," close=")">
+			#{tableId}
+		</foreach>
+	</delete>
+
+	<delete id="deleteGenTableActionById" parameterType="Long">
+		delete from gen_table_action where action_id = #{actionId}
+	</delete>
+
+</mapper>

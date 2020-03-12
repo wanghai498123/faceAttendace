@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecRuleMapper">
+    
+    <resultMap type="RecRule" id="RecRuleResult"><!--~--><!--~columnBegin-->
+        <result property="ruleId"    column="rule_id"    /><!--~rule_id-->
+        <result property="overtimeWork"    column="overtime_work"    /><!--~overtime_work-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="advanceFromWork"    column="advance_from_work"    /><!--~advance_from_work-->
+        <result property="lateForOver"    column="late_for_over"    /><!--~late_for_over-->
+        <result property="earlyRetirement"    column="early_retirement"    /><!--~early_retirement-->
+        <result property="afterEnteringArena"    column="after_entering_arena"    /><!--~after_entering_arena-->
+        <result property="afterAppearance"    column="after_appearance"    /><!--~after_appearance-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectRecRuleVo">
+        select rule_id, u.dept_id, overtime_work, advance_from_work, late_for_over, early_retirement, after_entering_arena, after_appearance,
+        d.dept_name
+          from rec_rule u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectRecRuleList" parameterType="RecRule" resultMap="RecRuleResult">
+        <include refid="selectRecRuleVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~overtime_work_select-->
+            <if test="deptId != null "> and dept_id = #{deptId}</if><!--~dept_id_select-->
+            <if test="advanceFromWork != null "> and advance_from_work = #{advanceFromWork}</if><!--~advance_from_work_select-->
+            <if test="lateForOver != null "> and late_for_over = #{lateForOver}</if><!--~late_for_over_select-->
+            <if test="earlyRetirement != null "> and early_retirement = #{earlyRetirement}</if><!--~early_retirement_select-->
+            <if test="afterEnteringArena != null "> and after_entering_arena = #{afterEnteringArena}</if><!--~after_entering_arena_select-->
+            <if test="afterAppearance != null "> and after_appearance = #{afterAppearance}</if><!--~after_appearance_select-->
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+    
+    <select id="selectRecRuleById" parameterType="Long" resultMap="RecRuleResult">
+        <include refid="selectRecRuleVo"/>
+        where rule_id = #{ruleId}
+    </select>
+        
+    <insert id="insertRecRule" parameterType="RecRule" useGeneratedKeys="true" keyProperty="ruleId">
+        insert into rec_rule
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="overtimeWork != null ">overtime_work,</if><!--~overtime_work_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="advanceFromWork != null ">advance_from_work,</if><!--~advance_from_work_insert1-->
+            <if test="lateForOver != null ">late_for_over,</if><!--~late_for_over_insert1-->
+            <if test="earlyRetirement != null ">early_retirement,</if><!--~early_retirement_insert1-->
+            <if test="afterEnteringArena != null ">after_entering_arena,</if><!--~after_entering_arena_insert1-->
+            <if test="afterAppearance != null ">after_appearance,</if><!--~after_appearance_insert1-->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="overtimeWork != null ">#{overtimeWork},</if><!--~overtime_work_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="advanceFromWork != null ">#{advanceFromWork},</if><!--~advance_from_work_insert2-->
+            <if test="lateForOver != null ">#{lateForOver},</if><!--~late_for_over_insert2-->
+            <if test="earlyRetirement != null ">#{earlyRetirement},</if><!--~early_retirement_insert2-->
+            <if test="afterEnteringArena != null ">#{afterEnteringArena},</if><!--~after_entering_arena_insert2-->
+            <if test="afterAppearance != null ">#{afterAppearance},</if><!--~after_appearance_insert2-->
+        </trim>
+    </insert>
+
+    <update id="updateRecRule" parameterType="RecRule">
+        update rec_rule
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="overtimeWork != null ">overtime_work = #{overtimeWork},</if><!--~overtime_work_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="advanceFromWork != null ">advance_from_work = #{advanceFromWork},</if><!--~advance_from_work_update-->
+            <if test="lateForOver != null ">late_for_over = #{lateForOver},</if><!--~late_for_over_update-->
+            <if test="earlyRetirement != null ">early_retirement = #{earlyRetirement},</if><!--~early_retirement_update-->
+            <if test="afterEnteringArena != null ">after_entering_arena = #{afterEnteringArena},</if><!--~after_entering_arena_update-->
+            <if test="afterAppearance != null ">after_appearance = #{afterAppearance},</if><!--~after_appearance_update-->
+        </trim>
+        where rule_id = #{ruleId}
+    </update>
+
+    <delete id="deleteRecRuleById" parameterType="Long">
+        delete from rec_rule where rule_id = #{ruleId}
+    </delete>
+
+    <delete id="deleteRecRuleByIds" parameterType="String">
+        delete from rec_rule where rule_id in 
+        <foreach item="ruleId" collection="array" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </delete>
+    
+</mapper>

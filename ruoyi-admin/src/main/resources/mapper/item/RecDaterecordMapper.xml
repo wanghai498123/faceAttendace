@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecDaterecordMapper">
+    
+    <resultMap type="RecDaterecord" id="RecDaterecordResult"><!--~--><!--~columnBegin-->
+        <result property="recordId"    column="record_id"    /><!--~record_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="personnelId"    column="personnel_id"    /><!--~personnel_id-->
+        <result property="teamName"    column="team_name"    /><!--~team_name-->
+        <result property="personnelName"    column="personnel_name"    /><!--~personnel_name-->
+        <result property="attendanceTime"    column="attendance_time"    /><!--~attendance_time-->
+        <result property="punchCardTime1"    column="punch_card_time1"    /><!--~punch_card_time1-->
+        <result property="punchCardTime2"    column="punch_card_time2"    /><!--~punch_card_time2-->
+        <result property="punchCardTime3"    column="punch_card_time3"    /><!--~punch_card_time3-->
+        <result property="punchCardTime4"    column="punch_card_time4"    /><!--~punch_card_time4-->
+        <result property="lateness"    column="lateness"    /><!--~lateness-->
+        <result property="lateArrivalTime"    column="late_arrival_time"    /><!--~late_arrival_time-->
+        <result property="earlyRetirementTimes"    column="early_retirement_times"    /><!--~early_retirement_times-->
+        <result property="arlyRetirementTime"    column="arly_retirement_time"    /><!--~arly_retirement_time-->
+        <result property="neglectWork"    column="neglect_work"    /><!--~neglect_work-->
+        <result property="effectiveWorkingDay"    column="effective_working_day"    /><!--~effective_working_day-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectRecDaterecordVo">
+        select record_id, u.dept_id, personnel_id, team_name, personnel_name, attendance_time, punch_card_time1, punch_card_time2, punch_card_time3, punch_card_time4, lateness, late_arrival_time, early_retirement_times, arly_retirement_time, neglect_work, effective_working_day,
+        d.dept_name
+        from rec_daterecord u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectRecDaterecordList" parameterType="RecDaterecord" resultMap="RecDaterecordResult">
+        <include refid="selectRecDaterecordVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="personnelId != null "> and personnel_id = #{personnelId}</if><!--~personnel_id_select-->
+            <if test="teamName != null  and teamName != ''"> and team_name like concat('%', #{teamName}, '%')</if><!--~team_name_select-->
+            <if test="personnelName != null  and personnelName != ''"> and personnel_name like concat('%', #{personnelName}, '%')</if><!--~personnel_name_select-->
+            <if test="attendanceTime != null "> and attendance_time = #{attendanceTime}</if><!--~attendance_time_select-->
+            <if test="punchCardTime1 != null "> and punch_card_time1 = #{punchCardTime1}</if><!--~punch_card_time1_select-->
+            <if test="punchCardTime2 != null "> and punch_card_time2 = #{punchCardTime2}</if><!--~punch_card_time2_select-->
+            <if test="punchCardTime3 != null "> and punch_card_time3 = #{punchCardTime3}</if><!--~punch_card_time3_select-->
+            <if test="punchCardTime4 != null "> and punch_card_time4 = #{punchCardTime4}</if><!--~punch_card_time4_select-->
+            <if test="lateness != null "> and lateness = #{lateness}</if><!--~lateness_select-->
+            <if test="lateArrivalTime != null "> and late_arrival_time = #{lateArrivalTime}</if><!--~late_arrival_time_select-->
+            <if test="earlyRetirementTimes != null "> and early_retirement_times = #{earlyRetirementTimes}</if><!--~early_retirement_times_select-->
+            <if test="arlyRetirementTime != null "> and arly_retirement_time = #{arlyRetirementTime}</if><!--~arly_retirement_time_select-->
+            <if test="neglectWork != null "> and neglect_work = #{neglectWork}</if><!--~neglect_work_select-->
+            <if test="effectiveWorkingDay != null "> and effective_working_day = #{effectiveWorkingDay}</if><!--~effective_working_day_select-->
+        </where>
+    </select>
+    
+    <select id="selectRecDaterecordById" parameterType="Long" resultMap="RecDaterecordResult">
+        <include refid="selectRecDaterecordVo"/>
+        where record_id = #{recordId}
+    </select>
+        
+    <insert id="insertRecDaterecord" parameterType="RecDaterecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into rec_daterecord
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="personnelId != null ">personnel_id,</if><!--~personnel_id_insert1-->
+            <if test="teamName != null  and teamName != ''">team_name,</if><!--~team_name_insert1-->
+            <if test="personnelName != null  and personnelName != ''">personnel_name,</if><!--~personnel_name_insert1-->
+            <if test="attendanceTime != null ">attendance_time,</if><!--~attendance_time_insert1-->
+            <if test="punchCardTime1 != null ">punch_card_time1,</if><!--~punch_card_time1_insert1-->
+            <if test="punchCardTime2 != null ">punch_card_time2,</if><!--~punch_card_time2_insert1-->
+            <if test="punchCardTime3 != null ">punch_card_time3,</if><!--~punch_card_time3_insert1-->
+            <if test="punchCardTime4 != null ">punch_card_time4,</if><!--~punch_card_time4_insert1-->
+            <if test="lateness != null ">lateness,</if><!--~lateness_insert1-->
+            <if test="lateArrivalTime != null ">late_arrival_time,</if><!--~late_arrival_time_insert1-->
+            <if test="earlyRetirementTimes != null ">early_retirement_times,</if><!--~early_retirement_times_insert1-->
+            <if test="arlyRetirementTime != null ">arly_retirement_time,</if><!--~arly_retirement_time_insert1-->
+            <if test="neglectWork != null ">neglect_work,</if><!--~neglect_work_insert1-->
+            <if test="effectiveWorkingDay != null ">effective_working_day,</if><!--~effective_working_day_insert1-->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="personnelId != null ">#{personnelId},</if><!--~personnel_id_insert2-->
+            <if test="teamName != null  and teamName != ''">#{teamName},</if><!--~team_name_insert2-->
+            <if test="personnelName != null  and personnelName != ''">#{personnelName},</if><!--~personnel_name_insert2-->
+            <if test="attendanceTime != null ">#{attendanceTime},</if><!--~attendance_time_insert2-->
+            <if test="punchCardTime1 != null ">#{punchCardTime1},</if><!--~punch_card_time1_insert2-->
+            <if test="punchCardTime2 != null ">#{punchCardTime2},</if><!--~punch_card_time2_insert2-->
+            <if test="punchCardTime3 != null ">#{punchCardTime3},</if><!--~punch_card_time3_insert2-->
+            <if test="punchCardTime4 != null ">#{punchCardTime4},</if><!--~punch_card_time4_insert2-->
+            <if test="lateness != null ">#{lateness},</if><!--~lateness_insert2-->
+            <if test="lateArrivalTime != null ">#{lateArrivalTime},</if><!--~late_arrival_time_insert2-->
+            <if test="earlyRetirementTimes != null ">#{earlyRetirementTimes},</if><!--~early_retirement_times_insert2-->
+            <if test="arlyRetirementTime != null ">#{arlyRetirementTime},</if><!--~arly_retirement_time_insert2-->
+            <if test="neglectWork != null ">#{neglectWork},</if><!--~neglect_work_insert2-->
+            <if test="effectiveWorkingDay != null ">#{effectiveWorkingDay},</if><!--~effective_working_day_insert2-->
+        </trim>
+    </insert>
+
+    <update id="updateRecDaterecord" parameterType="RecDaterecord">
+        update rec_daterecord
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="personnelId != null ">personnel_id = #{personnelId},</if><!--~personnel_id_update-->
+            <if test="teamName != null  and teamName != ''">team_name = #{teamName},</if><!--~team_name_update-->
+            <if test="personnelName != null  and personnelName != ''">personnel_name = #{personnelName},</if><!--~personnel_name_update-->
+            <if test="attendanceTime != null ">attendance_time = #{attendanceTime},</if><!--~attendance_time_update-->
+            <if test="punchCardTime1 != null ">punch_card_time1 = #{punchCardTime1},</if><!--~punch_card_time1_update-->
+            <if test="punchCardTime2 != null ">punch_card_time2 = #{punchCardTime2},</if><!--~punch_card_time2_update-->
+            <if test="punchCardTime3 != null ">punch_card_time3 = #{punchCardTime3},</if><!--~punch_card_time3_update-->
+            <if test="punchCardTime4 != null ">punch_card_time4 = #{punchCardTime4},</if><!--~punch_card_time4_update-->
+            <if test="lateness != null ">lateness = #{lateness},</if><!--~lateness_update-->
+            <if test="lateArrivalTime != null ">late_arrival_time = #{lateArrivalTime},</if><!--~late_arrival_time_update-->
+            <if test="earlyRetirementTimes != null ">early_retirement_times = #{earlyRetirementTimes},</if><!--~early_retirement_times_update-->
+            <if test="arlyRetirementTime != null ">arly_retirement_time = #{arlyRetirementTime},</if><!--~arly_retirement_time_update-->
+            <if test="neglectWork != null ">neglect_work = #{neglectWork},</if><!--~neglect_work_update-->
+            <if test="effectiveWorkingDay != null ">effective_working_day = #{effectiveWorkingDay},</if><!--~effective_working_day_update-->
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteRecDaterecordById" parameterType="Long">
+        delete from rec_daterecord where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteRecDaterecordByIds" parameterType="String">
+        delete from rec_daterecord where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+    
+</mapper>

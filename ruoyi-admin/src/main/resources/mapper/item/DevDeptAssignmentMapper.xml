@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.DevDeptAssignmentMapper">
+    
+    <resultMap type="DevDeptAssignment" id="DevDeptAssignmentResult"><!--~--><!--~columnBegin-->
+        <result property="deviceId"    column="device_id"    /><!--~device_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+    </resultMap>
+
+    <sql id="selectDevDeptAssignmentVo">
+        select device_id, dept_id from dev_dept_assignment
+    </sql>
+
+    <select id="selectDevDeptAssignmentList" parameterType="DevDeptAssignment" resultMap="DevDeptAssignmentResult">
+        <include refid="selectDevDeptAssignmentVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deviceId != null "> and device_id = #{deviceId}</if><!--~device_id_select-->
+            <if test="deptId != null "> and dept_id = #{deptId}</if><!--~dept_id_select-->
+        </where>
+    </select>
+    
+    <select id="selectDevDeptAssignmentById" parameterType="Long" resultMap="DevDeptAssignmentResult">
+        <include refid="selectDevDeptAssignmentVo"/>
+        where device_id = #{deviceId}
+    </select>
+        
+    <insert id="insertDevDeptAssignment" parameterType="DevDeptAssignment">
+        insert into dev_dept_assignment
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deviceId != null ">device_id,</if><!--~device_id_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deviceId != null ">#{deviceId},</if><!--~device_id_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateDevDeptAssignment" parameterType="DevDeptAssignment">
+        update dev_dept_assignment
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+        </trim>
+        where device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteDevDeptAssignmentById" parameterType="Long">
+        delete from dev_dept_assignment where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteDevDeptAssignmentByIds" parameterType="String">
+        delete from dev_dept_assignment where device_id in 
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

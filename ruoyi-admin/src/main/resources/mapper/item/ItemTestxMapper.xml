@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.ItemTestxMapper">
+    
+    <resultMap type="ItemTestx" id="ItemTestxResult"><!--~--><!--~columnBegin-->
+       <result property="testxId"    column="testx_id"    /><!--~testx_id-->
+       <result property="testxName"    column="testx_name"    /><!--~testx_name-->
+       <result property="script"    column="script"    /><!--~script-->
+       <result property="testyId"    column="testy_id"    /><!--~testy_id-->
+       <association property="testy"    column="testy_id"  javaType="ItemTesty" resultMap="testyResult"/><!--~testy_id-->
+    </resultMap>
+
+    <resultMap type="ItemTesty" id="testyResult"><!--~--><!--~columnBegin-->
+        <id     property="testyId"   column="testy_id"     />
+        <result property="testyName" column="testy_name"   />
+    </resultMap>
+
+    <sql id="selectItemTestxVo">
+        select testx.testx_id, testx.testx_name, testx.script, testx.testy_id, testy.testy_id, testy.testy_name
+
+        from item_testx testx
+        left join item_testy testy on testx.testy_id = testy.testy_id
+    </sql>
+
+    <select id="selectItemTestxList" parameterType="ItemTestx" resultMap="ItemTestxResult">
+        <include refid="selectItemTestxVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="testxName != null  and testxName != ''"> and testx.testx_name like concat('%', #{testxName}, '%')</if><!--~testx_name_select-->
+            <if test="script != null  and script != ''"> and testx.script = #{script}</if><!--~script_select-->
+        </where>
+    </select>
+
+    <select id="selectItemTestxAll"  resultMap="ItemTestxResult">
+        <include refid="selectItemTestxVo"/>
+    </select>
+    
+    <select id="selectItemTestxById" parameterType="Long" resultMap="ItemTestxResult">
+        <include refid="selectItemTestxVo"/>
+        where testx.testx_id = #{testxId}
+    </select>
+        
+    <insert id="insertItemTestx" parameterType="ItemTestx" useGeneratedKeys="true" keyProperty="testxId">
+        insert into item_testx
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="testxName != null  and testxName != ''">testx_name,</if><!--~testx_name_insert1-->
+            <if test="script != null  and script != ''">script,</if><!--~script_insert1-->
+            <if test="testyId != null ">testy_id,</if><!--~testy_id_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="testxName != null  and testxName != ''">#{testxName},</if><!--~testx_name_insert2-->
+            <if test="script != null  and script != ''">#{script},</if><!--~script_insert2-->
+            <if test="testyId != null ">#{testyId},</if><!--~testy_id_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateItemTestx" parameterType="ItemTestx">
+        update item_testx
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="testxName != null  and testxName != ''">testx_name = #{testxName},</if><!--~testx_name_update-->
+            <if test="script != null  and script != ''">script = #{script},</if><!--~script_update-->
+            <if test="testyId != null ">testy_id = #{testyId},</if><!--~testy_id_update-->
+        </trim>
+        where testx_id = #{testxId}
+    </update>
+
+    <delete id="deleteItemTestxById" parameterType="Long">
+        delete from item_testx where testx_id = #{testxId}
+    </delete>
+
+    <delete id="deleteItemTestxByIds" parameterType="String">
+        delete from item_testx where testx_id in 
+        <foreach item="testxId" collection="array" open="(" separator="," close=")">
+            #{testxId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+
+</mapper>

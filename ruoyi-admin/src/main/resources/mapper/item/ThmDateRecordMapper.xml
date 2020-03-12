@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.ThmDateRecordMapper">
+    
+    <resultMap type="ThmDateRecord" id="ThmDateRecordResult"><!--~--><!--~columnBegin-->
+        <result property="recordId"    column="record_id"    /><!--~record_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="personnelId"    column="personnel_id"    /><!--~personnel_id-->
+        <result property="personnelName"    column="personnel_name"    /><!--~personnel_name-->
+        <result property="attendanceTime"    column="attendance_time"    /><!--~attendance_time-->
+        <result property="thermometry"    column="thermometry"    /><!--~thermometry-->
+        <result property="detectionState"    column="detection_state"    /><!--~detection_state-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectThmDateRecordVo">
+        select record_id, u.dept_id, personnel_id, personnel_name, attendance_time, thermometry, detection_state,
+        d.dept_name
+        from thm_date_record  u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectThmDateRecordList" parameterType="ThmDateRecord" resultMap="ThmDateRecordResult">
+        <include refid="selectThmDateRecordVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="personnelId != null "> and personnel_id = #{personnelId}</if><!--~personnel_id_select-->
+            <if test="personnelName != null  and personnelName != ''"> and personnel_name like concat('%', #{personnelName}, '%')</if><!--~personnel_name_select-->
+            <if test="attendanceTime != null "> and attendance_time = #{attendanceTime}</if><!--~attendance_time_select-->
+            <if test="thermometry != null "> and thermometry = #{thermometry}</if><!--~thermometry_select-->
+            <if test="detectionState != null  and detectionState != ''"> and detection_state = #{detectionState}</if><!--~detection_state_select-->
+        </where>
+    </select>
+    
+    <select id="selectThmDateRecordById" parameterType="Long" resultMap="ThmDateRecordResult">
+        <include refid="selectThmDateRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+        
+    <insert id="insertThmDateRecord" parameterType="ThmDateRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into thm_date_record
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="personnelId != null ">personnel_id,</if><!--~personnel_id_insert1-->
+            <if test="personnelName != null  and personnelName != ''">personnel_name,</if><!--~personnel_name_insert1-->
+            <if test="attendanceTime != null ">attendance_time,</if><!--~attendance_time_insert1-->
+            <if test="thermometry != null ">thermometry,</if><!--~thermometry_insert1-->
+            <if test="detectionState != null  and detectionState != ''">detection_state,</if><!--~detection_state_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="personnelId != null ">#{personnelId},</if><!--~personnel_id_insert2-->
+            <if test="personnelName != null  and personnelName != ''">#{personnelName},</if><!--~personnel_name_insert2-->
+            <if test="attendanceTime != null ">#{attendanceTime},</if><!--~attendance_time_insert2-->
+            <if test="thermometry != null ">#{thermometry},</if><!--~thermometry_insert2-->
+            <if test="detectionState != null  and detectionState != ''">#{detectionState},</if><!--~detection_state_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateThmDateRecord" parameterType="ThmDateRecord">
+        update thm_date_record
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="personnelId != null ">personnel_id = #{personnelId},</if><!--~personnel_id_update-->
+            <if test="personnelName != null  and personnelName != ''">personnel_name = #{personnelName},</if><!--~personnel_name_update-->
+            <if test="attendanceTime != null ">attendance_time = #{attendanceTime},</if><!--~attendance_time_update-->
+            <if test="thermometry != null ">thermometry = #{thermometry},</if><!--~thermometry_update-->
+            <if test="detectionState != null  and detectionState != ''">detection_state = #{detectionState},</if><!--~detection_state_update-->
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteThmDateRecordById" parameterType="Long">
+        delete from thm_date_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteThmDateRecordByIds" parameterType="String">
+        delete from thm_date_record where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

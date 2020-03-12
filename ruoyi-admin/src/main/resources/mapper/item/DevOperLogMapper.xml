@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.DevOperLogMapper">
+    
+    <resultMap type="DevOperLog" id="DevOperLogResult"><!--~--><!--~columnBegin-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="operId"    column="oper_id"    /><!--~oper_id-->
+        <result property="businessType"    column="business_type"    /><!--~business_type-->
+        <result property="operLocation"    column="oper_location"    /><!--~oper_location-->
+        <result property="operParam"    column="oper_param"    /><!--~oper_param-->
+        <result property="errorMsg"    column="error_msg"    /><!--~error_msg-->
+        <result property="operTime"    column="oper_time"    /><!--~oper_time-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectDevOperLogVo">
+        select oper_id, u.dept_id, business_type, oper_location, oper_param, error_msg, oper_time,
+        d.dept_name
+        from dev_oper_log u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectDevOperLogList" parameterType="DevOperLog" resultMap="DevOperLogResult">
+        <include refid="selectDevOperLogVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="businessType != null "> and business_type = #{businessType}</if><!--~business_type_select-->
+            <if test="operLocation != null  and operLocation != ''"> and oper_location = #{operLocation}</if><!--~oper_location_select-->
+            <if test="operParam != null  and operParam != ''"> and oper_param = #{operParam}</if><!--~oper_param_select-->
+            <if test="errorMsg != null  and errorMsg != ''"> and error_msg = #{errorMsg}</if><!--~error_msg_select-->
+            <if test="operTime != null "> and oper_time = #{operTime}</if><!--~oper_time_select-->
+        </where>
+    </select>
+    
+    <select id="selectDevOperLogById" parameterType="Long" resultMap="DevOperLogResult">
+        <include refid="selectDevOperLogVo"/>
+        where oper_id = #{operId}
+    </select>
+        
+    <insert id="insertDevOperLog" parameterType="DevOperLog" useGeneratedKeys="true" keyProperty="operId">
+        insert into dev_oper_log
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="businessType != null ">business_type,</if><!--~business_type_insert1-->
+            <if test="operLocation != null  and operLocation != ''">oper_location,</if><!--~oper_location_insert1-->
+            <if test="operParam != null  and operParam != ''">oper_param,</if><!--~oper_param_insert1-->
+            <if test="errorMsg != null  and errorMsg != ''">error_msg,</if><!--~error_msg_insert1-->
+            <if test="operTime != null ">oper_time,</if><!--~oper_time_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="businessType != null ">#{businessType},</if><!--~business_type_insert2-->
+            <if test="operLocation != null  and operLocation != ''">#{operLocation},</if><!--~oper_location_insert2-->
+            <if test="operParam != null  and operParam != ''">#{operParam},</if><!--~oper_param_insert2-->
+            <if test="errorMsg != null  and errorMsg != ''">#{errorMsg},</if><!--~error_msg_insert2-->
+            <if test="operTime != null ">#{operTime},</if><!--~oper_time_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateDevOperLog" parameterType="DevOperLog">
+        update dev_oper_log
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="businessType != null ">business_type = #{businessType},</if><!--~business_type_update-->
+            <if test="operLocation != null  and operLocation != ''">oper_location = #{operLocation},</if><!--~oper_location_update-->
+            <if test="operParam != null  and operParam != ''">oper_param = #{operParam},</if><!--~oper_param_update-->
+            <if test="errorMsg != null  and errorMsg != ''">error_msg = #{errorMsg},</if><!--~error_msg_update-->
+            <if test="operTime != null ">oper_time = #{operTime},</if><!--~oper_time_update-->
+        </trim>
+        where oper_id = #{operId}
+    </update>
+
+    <delete id="deleteDevOperLogById" parameterType="Long">
+        delete from dev_oper_log where oper_id = #{operId}
+    </delete>
+
+    <delete id="deleteDevOperLogByIds" parameterType="String">
+        delete from dev_oper_log where oper_id in 
+        <foreach item="operId" collection="array" open="(" separator="," close=")">
+            #{operId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

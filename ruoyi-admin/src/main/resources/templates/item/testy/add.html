@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增部门')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-testy-add"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">父部门id：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input id="treeId" name="parentId" type="hidden" th:value="${itemTesty?.testyId}"/>
+                        <input class="form-control" type="text" onclick="selectTestyTree()" id="treeName" readonly="true" th:value="${itemTesty?.testyName}">
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div><!--~parentId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">部门名称：</label>
+                <div class="col-sm-8">
+                    <input name="testyName" class="form-control" type="text" >
+                </div>
+            </div><!--~testyName-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">显示顺序：</label>
+                <div class="col-sm-8">
+                    <input name="orderNum" class="form-control" type="text" >
+                </div>
+            </div><!--~orderNum-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">负责人：</label>
+                <div class="col-sm-8">
+                    <input name="leader" class="form-control" type="text" >
+                </div>
+            </div><!--~leader-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">联系电话：</label>
+                <div class="col-sm-8">
+                    <input name="phone" class="form-control" type="text" >
+                </div>
+            </div><!--~phone-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">邮箱：</label>
+                <div class="col-sm-8">
+                    <input name="email" class="form-control" type="text" >
+                </div>
+            </div><!--~email-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">部门状态：</label>
+                <div class="col-sm-8">
+                    <input name="status" class="form-control" type="text" >
+                </div>
+            </div><!--~status-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">删除标志：</label>
+                <div class="col-sm-8">
+                    <input name="delFlag" class="form-control" type="text" >
+                </div>
+            </div><!--~delFlag-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">机构类型：</label>
+                <div class="col-sm-8">
+                    <input name="deptType" class="form-control" type="text" >
+                </div>
+            </div><!--~deptType-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+
+    <script type="text/javascript">
+        var prefix = ctx + "item/testy";
+
+        $(function() {
+        });
+        /**~初始化验证*/
+        $("#form-testy-add").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                var data = $('#form-testy-add').serializeArray();
+                $.operate.save(prefix + "/add", data);
+            }
+        }
+
+        /*部门-新增-选择父部门树*/
+        function selectTestyTree() {
+            var options = {
+                title: '部门选择',
+                width: "380",
+                url: prefix + "/selectTestyTree/" + $("#treeId").val(),
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var body = layer.getChildFrame('body', index);
+               $("#treeId").val(body.find('#treeId').val());
+               $("#treeName").val(body.find('#treeName').val());
+               layer.close(index);
+        }
+    </script>
+</body>
+</html>

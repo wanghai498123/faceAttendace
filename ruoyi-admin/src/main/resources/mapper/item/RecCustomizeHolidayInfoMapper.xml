@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecCustomizeHolidayInfoMapper">
+    
+    <resultMap type="RecCustomizeHolidayInfo" id="RecCustomizeHolidayInfoResult"><!--~--><!--~columnBegin-->
+        <result property="customizeHolidayInfoId"    column="customize_holiday_info_id"    /><!--~customize_holiday_info_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="holiday"    column="holiday"    /><!--~holiday-->
+        <result property="holidayName"    column="holiday_name"    /><!--~holiday_name-->
+        <result property="holidayScript"    column="holiday_script"    /><!--~holiday_script-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectRecCustomizeHolidayInfoVo">
+        select customize_holiday_info_id, u.dept_id, holiday, holiday_name, holiday_script,
+        d.dept_name
+        from rec_customize_holiday_info u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectRecCustomizeHolidayInfoList" parameterType="RecCustomizeHolidayInfo" resultMap="RecCustomizeHolidayInfoResult">
+        <include refid="selectRecCustomizeHolidayInfoVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="holiday != null "> and holiday = #{holiday}</if><!--~holiday_select-->
+            <if test="holidayName != null  and holidayName != ''"> and holiday_name like concat('%', #{holidayName}, '%')</if><!--~holiday_name_select-->
+            <if test="holidayScript != null  and holidayScript != ''"> and holiday_script = #{holidayScript}</if><!--~holiday_script_select-->
+        </where>
+    </select>
+    
+    <select id="selectRecCustomizeHolidayInfoById" parameterType="Long" resultMap="RecCustomizeHolidayInfoResult">
+        <include refid="selectRecCustomizeHolidayInfoVo"/>
+        where customize_holiday_info_id = #{customizeHolidayInfoId}
+    </select>
+        
+    <insert id="insertRecCustomizeHolidayInfo" parameterType="RecCustomizeHolidayInfo" useGeneratedKeys="true" keyProperty="customizeHolidayInfoId">
+        insert into rec_customize_holiday_info
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="holiday != null ">holiday,</if><!--~holiday_insert1-->
+            <if test="holidayName != null  and holidayName != ''">holiday_name,</if><!--~holiday_name_insert1-->
+            <if test="holidayScript != null  and holidayScript != ''">holiday_script,</if><!--~holiday_script_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="holiday != null ">#{holiday},</if><!--~holiday_insert2-->
+            <if test="holidayName != null  and holidayName != ''">#{holidayName},</if><!--~holiday_name_insert2-->
+            <if test="holidayScript != null  and holidayScript != ''">#{holidayScript},</if><!--~holiday_script_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateRecCustomizeHolidayInfo" parameterType="RecCustomizeHolidayInfo">
+        update rec_customize_holiday_info
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="holiday != null ">holiday = #{holiday},</if><!--~holiday_update-->
+            <if test="holidayName != null  and holidayName != ''">holiday_name = #{holidayName},</if><!--~holiday_name_update-->
+            <if test="holidayScript != null  and holidayScript != ''">holiday_script = #{holidayScript},</if><!--~holiday_script_update-->
+        </trim>
+        where customize_holiday_info_id = #{customizeHolidayInfoId}
+    </update>
+
+    <delete id="deleteRecCustomizeHolidayInfoById" parameterType="Long">
+        delete from rec_customize_holiday_info where customize_holiday_info_id = #{customizeHolidayInfoId}
+    </delete>
+
+    <delete id="deleteRecCustomizeHolidayInfoByIds" parameterType="String">
+        delete from rec_customize_holiday_info where customize_holiday_info_id in 
+        <foreach item="customizeHolidayInfoId" collection="array" open="(" separator="," close=")">
+            #{customizeHolidayInfoId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

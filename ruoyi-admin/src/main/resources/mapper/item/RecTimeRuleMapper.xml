@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecTimeRuleMapper">
+    
+    <resultMap type="RecTimeRule" id="RecTimeRuleResult"><!--~--><!--~columnBegin-->
+        <result property="timeRuleId"    column="time_rule_id"    /><!--~time_rule_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="workTime"    column="work_time"    /><!--~work_time-->
+        <result property="workoutTime"    column="workout_time"    /><!--~workout_time-->
+        <result property="lateArrival"    column="late_arrival"    /><!--~late_arrival-->
+        <result property="lateArrivalNeglect"    column="late_arrival_neglect"    /><!--~late_arrival_neglect-->
+        <result property="arlyRetirement"    column="arly_retirement"    /><!--~arly_retirement-->
+        <result property="arlyRetirementNeglect"    column="arly_retirement_neglect"    /><!--~arly_retirement_neglect-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectRecTimeRuleVo">
+        select time_rule_id, u.dept_id, work_time, workout_time, late_arrival, late_arrival_neglect, arly_retirement, arly_retirement_neglect,
+        d.dept_name
+        from rec_time_rule  u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectRecTimeRuleList" parameterType="RecTimeRule" resultMap="RecTimeRuleResult">
+        <include refid="selectRecTimeRuleVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="workTime != null "> and work_time = #{workTime}</if><!--~work_time_select-->
+            <if test="workoutTime != null "> and workout_time = #{workoutTime}</if><!--~workout_time_select-->
+            <if test="lateArrival != null "> and late_arrival = #{lateArrival}</if><!--~late_arrival_select-->
+            <if test="lateArrivalNeglect != null "> and late_arrival_neglect = #{lateArrivalNeglect}</if><!--~late_arrival_neglect_select-->
+            <if test="arlyRetirement != null "> and arly_retirement = #{arlyRetirement}</if><!--~arly_retirement_select-->
+            <if test="arlyRetirementNeglect != null "> and arly_retirement_neglect = #{arlyRetirementNeglect}</if><!--~arly_retirement_neglect_select-->
+        </where>
+    </select>
+    
+    <select id="selectRecTimeRuleById" parameterType="Long" resultMap="RecTimeRuleResult">
+        <include refid="selectRecTimeRuleVo"/>
+        where time_rule_id = #{timeRuleId}
+    </select>
+        
+    <insert id="insertRecTimeRule" parameterType="RecTimeRule" useGeneratedKeys="true" keyProperty="timeRuleId">
+        insert into rec_time_rule
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="workTime != null ">work_time,</if><!--~work_time_insert1-->
+            <if test="workoutTime != null ">workout_time,</if><!--~workout_time_insert1-->
+            <if test="lateArrival != null ">late_arrival,</if><!--~late_arrival_insert1-->
+            <if test="lateArrivalNeglect != null ">late_arrival_neglect,</if><!--~late_arrival_neglect_insert1-->
+            <if test="arlyRetirement != null ">arly_retirement,</if><!--~arly_retirement_insert1-->
+            <if test="arlyRetirementNeglect != null ">arly_retirement_neglect,</if><!--~arly_retirement_neglect_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="workTime != null ">#{workTime},</if><!--~work_time_insert2-->
+            <if test="workoutTime != null ">#{workoutTime},</if><!--~workout_time_insert2-->
+            <if test="lateArrival != null ">#{lateArrival},</if><!--~late_arrival_insert2-->
+            <if test="lateArrivalNeglect != null ">#{lateArrivalNeglect},</if><!--~late_arrival_neglect_insert2-->
+            <if test="arlyRetirement != null ">#{arlyRetirement},</if><!--~arly_retirement_insert2-->
+            <if test="arlyRetirementNeglect != null ">#{arlyRetirementNeglect},</if><!--~arly_retirement_neglect_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateRecTimeRule" parameterType="RecTimeRule">
+        update rec_time_rule
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="workTime != null ">work_time = #{workTime},</if><!--~work_time_update-->
+            <if test="workoutTime != null ">workout_time = #{workoutTime},</if><!--~workout_time_update-->
+            <if test="lateArrival != null ">late_arrival = #{lateArrival},</if><!--~late_arrival_update-->
+            <if test="lateArrivalNeglect != null ">late_arrival_neglect = #{lateArrivalNeglect},</if><!--~late_arrival_neglect_update-->
+            <if test="arlyRetirement != null ">arly_retirement = #{arlyRetirement},</if><!--~arly_retirement_update-->
+            <if test="arlyRetirementNeglect != null ">arly_retirement_neglect = #{arlyRetirementNeglect},</if><!--~arly_retirement_neglect_update-->
+        </trim>
+        where time_rule_id = #{timeRuleId}
+    </update>
+
+    <delete id="deleteRecTimeRuleById" parameterType="Long">
+        delete from rec_time_rule where time_rule_id = #{timeRuleId}
+    </delete>
+
+    <delete id="deleteRecTimeRuleByIds" parameterType="String">
+        delete from rec_time_rule where time_rule_id in 
+        <foreach item="timeRuleId" collection="array" open="(" separator="," close=")">
+            #{timeRuleId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

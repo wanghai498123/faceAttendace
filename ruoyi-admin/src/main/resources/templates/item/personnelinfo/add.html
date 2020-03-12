@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增人员信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: jasny-bootstrap-css" />
+</head>
+<body class="white-bg">
+<div class="main-content">
+    <form class="form-horizontal m" id="form-personnelinfo-add">
+        <input name="deptId" type="hidden" id="treeId"/>
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6"><!--~--><!--~columnBegin-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">姓名：</label>
+                    <div class="col-sm-8">
+                        <input name="personnelName" class="form-control" type="text">
+                    </div>
+                </div><!--~personnelName-->
+            </div>
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">机构名：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input name="deptName" onclick="selectDeptTree()" id="treeName" type="text" placeholder="请选择机构名" class="form-control" required>
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div><!--~deptId-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">联系方式：</label>
+                    <div class="col-sm-8">
+                        <input name="contact" class="form-control" type="text">
+                    </div>
+                </div><!--~contact-->
+            </div>
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">岗位：</label>
+                    <div class="col-sm-8">
+                        <select name="postId" class="form-control m-b" th:with="type=${@dict.getType('item_personnel_post')}">
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
+                    </div>
+                </div><!--~postId-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">身份证号：</label>
+                    <div class="col-sm-8">
+                        <input name="idNumber" class="form-control" type="text">
+                    </div>
+                </div><!--~idNumber-->
+            </div>
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">入职时间：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input name="approachTime" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                        </div>
+                    </div>
+                </div><!--~approachTime-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">出生日期：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input name="birthday" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                        </div>
+                    </div>
+                </div><!--~birthday-->
+            </div>
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">在职状态：</label>
+                    <div class="col-sm-8">
+                        <div class="radio-box" th:each="dict : ${@dict.getType('item_personnel_incumbency')}">
+                            <input type="radio" th:id="${'incumbency_' + dict.dictCode}" name="incumbency" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                            <label th:for="${'incumbency_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                        </div>
+                    </div>
+                </div><!--~incumbency-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">工号：</label>
+                    <div class="col-sm-8">
+                        <input name="cardNumber" class="form-control" type="text">
+                    </div>
+                </div><!--~cardNumber-->
+            </div>
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">数据下发：</label>
+                    <div class="col-sm-8">
+                        <div class="radio-box" th:each="dict : ${@dict.getType('item_personnel_data_dissemination')}">
+                            <input type="radio" th:id="${'dataDissemination_' + dict.dictCode}" name="dataDissemination" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                            <label th:for="${'dataDissemination_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                        </div>
+                    </div>
+                </div><!--~dataDissemination-->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">用户性别：</label>
+                    <div class="col-sm-8">
+                        <select name="sex" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
+                            <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                        </select>
+                    </div>
+                </div><!--~sex-->
+            </div>
+            <div class="col-sm-6"><!--~-->
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">详细地址：</label>
+                    <div class="col-sm-8">
+                        <input name="fullAddress"  id="fullAddress" value=" "  class="form-control" type="text">
+                    </div>
+                </div><!--~fullAddress-->
+            </div>
+        </div>
+        <h4 class="form-header h4">人脸认证</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="row">
+                    <div class="col-sm-2">
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                    <img src="/img/profile.jpg">
+                                </div>
+                                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                <div>
+                                    <span class="btn btn-white btn-file"><span class="fileinput-new">选择人脸图片</span><span class="fileinput-exists">更改人脸图片</span><input  id="cert"  type="file"></span>
+                                    <a href="#" class="btn btn-white fileinput-exists" data-dismiss="fileinput">清除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <div class="form-group">
+                            <div class="fileinput fileinput-new" data-provides="fileinput">
+                                <div class="fileinput-new thumbnail" style="width: 200px; height: 150px;">
+                                    <img src="/img/profile.jpg">
+                                </div>
+                                <div class="fileinput-preview fileinput-exists thumbnail" style="max-width: 200px; max-height: 150px;"></div>
+                                <div>
+                                    <span class="btn btn-white btn-file"><span class="fileinput-new">选择证件图片</span><span class="fileinput-exists">更改证件图片</span><input  id="cert1" type="file"></span>
+                                    <a href="#" class="btn btn-white fileinput-exists" data-dismiss="fileinput">清除</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: jasny-bootstrap-js" />
+<script type="text/javascript">
+        var prefix = ctx + "item/personnelinfo"
+
+        /**~初始化验证*/
+        $("#form-personnelinfo-add").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                var formData = new FormData();
+                formData.append("files", $("#cert")[0].files[0]);    //生成一对表单属性
+                formData.append("files", $("#cert1")[0].files[0]);    //生成一对表单属性
+
+                $.each($('#form-personnelinfo-add').serializeArray(), function(i, field) {
+                    formData.append(field.name,field.value);
+                });
+                $.operate.saveFormData(prefix + "/add", formData);
+            }
+        }
+
+        function selectDeptTree() {
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId+"/3";
+            var options = {
+                title: '选择项目',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+
+        $("input[name='birthday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='dutyTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='approachTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='validity']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+    </script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <input type="checkbox" id="updateSupport" name="updateSupport" title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+                &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</html>

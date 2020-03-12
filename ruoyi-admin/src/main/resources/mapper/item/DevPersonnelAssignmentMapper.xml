@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.DevPersonnelAssignmentMapper">
+    
+    <resultMap type="DevPersonnelAssignment" id="DevPersonnelAssignmentResult"><!--~--><!--~columnBegin-->
+        <result property="deviceId"    column="device_id"    /><!--~device_id-->
+        <result property="personnelId"    column="personnel_id"    /><!--~personnel_id-->
+        <result property="syndate"    column="synDate"    /><!--~synDate-->
+    </resultMap>
+
+    <sql id="selectDevPersonnelAssignmentVo">
+        select device_id, personnel_id, synDate from dev_personnel_assignment
+    </sql>
+
+    <select id="selectDevPersonnelAssignmentList" parameterType="DevPersonnelAssignment" resultMap="DevPersonnelAssignmentResult">
+        <include refid="selectDevPersonnelAssignmentVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deviceId != null "> and device_id = #{deviceId}</if><!--~device_id_select-->
+            <if test="personnelId != null "> and personnel_id = #{personnelId}</if><!--~personnel_id_select-->
+            <if test="syndate != null  and syndate != ''"> and synDate = #{syndate}</if><!--~synDate_select-->
+        </where>
+    </select>
+    
+    <select id="selectDevPersonnelAssignmentById" parameterType="Long" resultMap="DevPersonnelAssignmentResult">
+        <include refid="selectDevPersonnelAssignmentVo"/>
+        where device_id = #{deviceId}
+    </select>
+        
+    <insert id="insertDevPersonnelAssignment" parameterType="DevPersonnelAssignment">
+        insert into dev_personnel_assignment
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deviceId != null ">device_id,</if><!--~device_id_insert1-->
+            <if test="personnelId != null ">personnel_id,</if><!--~personnel_id_insert1-->
+            <if test="syndate != null  and syndate != ''">synDate,</if><!--~synDate_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deviceId != null ">#{deviceId},</if><!--~device_id_insert2-->
+            <if test="personnelId != null ">#{personnelId},</if><!--~personnel_id_insert2-->
+            <if test="syndate != null  and syndate != ''">#{syndate},</if><!--~synDate_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateDevPersonnelAssignment" parameterType="DevPersonnelAssignment">
+        update dev_personnel_assignment
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="personnelId != null ">personnel_id = #{personnelId},</if><!--~personnel_id_update-->
+            <if test="syndate != null  and syndate != ''">synDate = #{syndate},</if><!--~synDate_update-->
+        </trim>
+        where device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteDevPersonnelAssignmentById" parameterType="Long">
+        delete from dev_personnel_assignment where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteDevPersonnelAssignmentByIds" parameterType="String">
+        delete from dev_personnel_assignment where device_id in 
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.ThmRuleMapper">
+    
+    <resultMap type="ThmRule" id="ThmRuleResult"><!--~--><!--~columnBegin-->
+        <result property="ruleId"    column="rule_id"    /><!--~rule_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="temperature"    column="temperature"    /><!--~temperature-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectThmRuleVo">
+        select rule_id, u.dept_id, temperature,
+        d.dept_name
+        from thm_rule u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectThmRuleList" parameterType="ThmRule" resultMap="ThmRuleResult">
+        <include refid="selectThmRuleVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="temperature != null "> and temperature = #{temperature}</if><!--~temperature_select-->
+        </where>
+    </select>
+    
+    <select id="selectThmRuleById" parameterType="Long" resultMap="ThmRuleResult">
+        <include refid="selectThmRuleVo"/>
+        where rule_id = #{ruleId}
+    </select>
+        
+    <insert id="insertThmRule" parameterType="ThmRule" useGeneratedKeys="true" keyProperty="ruleId">
+        insert into thm_rule
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="temperature != null ">temperature,</if><!--~temperature_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="temperature != null ">#{temperature},</if><!--~temperature_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateThmRule" parameterType="ThmRule">
+        update thm_rule
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="temperature != null ">temperature = #{temperature},</if><!--~temperature_update-->
+        </trim>
+        where rule_id = #{ruleId}
+    </update>
+
+    <delete id="deleteThmRuleById" parameterType="Long">
+        delete from thm_rule where rule_id = #{ruleId}
+    </delete>
+
+    <delete id="deleteThmRuleByIds" parameterType="String">
+        delete from thm_rule where rule_id in 
+        <foreach item="ruleId" collection="array" open="(" separator="," close=")">
+            #{ruleId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('来访记录列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 组织机构
+            </div>
+            <div class="box-tools pull-right">
+                <a type="button" class="btn btn-box-tool" href="#" onclick="dept()" title="组织机构"><i class="fa fa-edit"></i></a>
+                <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新组织机构"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+
+<div class="ui-layout-center">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <input type="hidden" id="deptId" name="deptId">
+                    <div class="select-list">
+                        <ul><!--~--><!--~columnBegin-->
+                            <li>
+                                <p>姓名：</p>
+                                <input type="text" name="subscribeName"/>
+                            </li><!--~subscribeId-->
+                            <li class="select-time">
+                                <p>打卡时间：</p>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginPunchCardTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endPunchCardTime]"/>
+                            </li><!--~punchCardTime-->
+                            <li>
+                                <p>状态：</p>
+                                <select name="punchCardState" th:with="type=${@dict.getType('item_face_device_channel_type')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li><!--~punchCardState-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="item:vtrRecord:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('item:vtrRecord:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('item:vtrRecord:remove')}]];
+        /**~初始化字典*/
+        var punchCardStateDatas = [[${@dict.getType('item_face_device_channel_type')}]];
+        /**~dictInit*/
+        var prefix = ctx + "item/vtrRecord";
+
+        $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        queryTableList();
+        queryDeptTree();
+        });
+
+        function queryTableList()
+		{
+		 var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "来访记录",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'recordId',
+                    title : '标识',
+                    visible: false
+                },/**~*//**~columnBegin*/
+                {
+                    field : 'deptName',
+                    title : '机构名'
+                },/**~deptId*/
+                {
+                    field : 'subscribeName',
+                    title : '访客'
+                },/**~subscribeId*/
+                {
+                    field : 'registrationPhoto',
+                    title : '登记照片'
+                },/**~registrationPhoto*/
+                {
+                    field : 'punchCardPhotos',
+                    title : '打卡照片'
+                },/**~punchCardPhotos*/
+                {
+                    field : 'punchCardTime',
+                    title : '打卡时间'
+                },/**~punchCardTime*/
+                {
+                    field : 'punchCardState',
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(punchCardStateDatas, value);
+                    }
+                },/**~punchCardState*/
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.recordId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.recordId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+		}
+
+	function queryDeptTree()
+    {
+        var url = ctx + "system/dept/treeData/1?random="+$.common.random(1,100000);
+        var options = {
+            url: url,
+            expandLevel: 1,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#deptId").val(treeNode.id);
+            //$("#parentId").val(treeNode.pId);
+            $.table.search();
+        }
+    }
+
+    $('#btnExpand').click(function() {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function() {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+
+    /* 用户管理-部门 */
+    function dept() {
+        var url = ctx + "system/dept";
+        $.modal.openTab("机构管理", url);
+    }
+    </script>
+</body>
+</html>

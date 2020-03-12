@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增假日设置')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-holidayInfo-add"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">假期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="holiday" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~holiday-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">假期名称：</label>
+                <div class="col-sm-8">
+                    <input name="holidayName" class="form-control" type="text" >
+                </div>
+            </div><!--~holidayName-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">假期描叙：</label>
+                <div class="col-sm-8">
+                    <input name="holidayScript" class="form-control" type="text" >
+                </div>
+            </div><!--~holidayScript-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/holidayInfo";
+
+        /**~初始化验证*/
+        $("#form-holidayInfo-add").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-holidayInfo-add').serialize());
+            }
+        }
+
+        $("input[name='holiday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

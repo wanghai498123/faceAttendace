@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增建筑公司')" />
+    <th:block th:include="include :: citySet-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-company-add"><!--~--><!--~columnBegin-->
+            <input name="deptId" type="hidden" value="100"  id="treeId"/><!--~deptId-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">公司名称：</label>
+                <div class="col-sm-8">
+                    <input name="companyName" class="form-control" type="text">
+                </div>
+            </div><!--~companyName-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">联系人：</label>
+                <div class="col-sm-8">
+                    <input name="contact" class="form-control" type="text">
+                </div>
+            </div><!--~contact-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">联系电话：</label>
+                <div class="col-sm-8">
+                    <input name="phonenumber" class="form-control" type="text">
+                </div>
+            </div><!--~phonenumber-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">邮箱：</label>
+                <div class="col-sm-8">
+                    <input name="email" class="form-control" type="text">
+                </div>
+            </div><!--~email-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">详细地址：</label>
+                <div class="col-sm-8">
+                    <input name="fullAddress" id="fullAddress" value=" " class="form-control" type="text">
+                </div>
+            </div><!--~fullAddress-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">纳税人识别号：</label>
+                <div class="col-sm-8">
+                    <input name="taxpayerNumber" class="form-control" type="text">
+                </div>
+            </div><!--~taxpayerNumber-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">信用代码：</label>
+                <div class="col-sm-8">
+                    <input name="creditCode" class="form-control" type="text">
+                </div>
+            </div><!--~creditCode-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">注册资金：</label>
+                <div class="col-sm-8">
+                    <input name="registeredCapital" class="form-control" type="text">
+                </div>
+            </div><!--~registeredCapital-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">单位类型：</label>
+                <div class="col-sm-8">
+                    <select name="unittype" class="form-control m-b" th:with="type=${@dict.getType('item_unit_type')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div><!--~unittype-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">银行代码：</label>
+                <div class="col-sm-8">
+                    <input name="bankCode" class="form-control" type="text">
+                </div>
+            </div><!--~bankCode-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">支行名称：</label>
+                <div class="col-sm-8">
+                    <input name="subbranch" class="form-control" type="text">
+                </div>
+            </div><!--~subbranch-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">银行卡号：</label>
+                <div class="col-sm-8">
+                    <input name="bankNumber" class="form-control" type="text">
+                </div>
+            </div><!--~bankNumber-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: citySet-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/company"
+
+
+        $("#fullAddress").click(function (e) {
+            SelCity(this,e);
+        });
+        /**~初始化验证*/
+        $("#form-company-add").validate({
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-company-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

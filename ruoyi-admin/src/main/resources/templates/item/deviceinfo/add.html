@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增设备信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-deviceinfo-add"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分组名：</label>
+                <div class="col-sm-8">
+                    <input name="teamId" class="form-control" type="text" >
+                </div>
+            </div><!--~teamId-->
+            <input name="deptId" type="hidden" id="treeId"/>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">机构名称：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input name="deptName" onclick="selectDeptTree()" id="treeName" type="text" placeholder="请选择归属项目" class="form-control" required>
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div><!--~deptId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">设备类型：</label>
+                <div class="col-sm-8">
+                    <select name="deviceCategory" class="form-control m-b" th:with="type=${@dict.getType('item_face_device_category')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div><!--~deviceCategory-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">设备名称：</label>
+                <div class="col-sm-8">
+                    <input name="deviceName" class="form-control" type="text">
+                </div>
+            </div><!--~deviceName-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">所属厂家：</label>
+                <div class="col-sm-8">
+                    <input name="manufacturer" class="form-control" type="text">
+                </div>
+            </div><!--~manufacturer-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">IP地址：</label>
+                <div class="col-sm-8">
+                    <input name="ipAddress" class="form-control" type="text">
+                </div>
+            </div><!--~ipAddress-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">端口号：</label>
+                <div class="col-sm-8">
+                    <input name="port" class="form-control" type="text">
+                </div>
+            </div><!--~port-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">通道类别：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('item_face_device_channel_type')}">
+                        <input type="radio" th:id="${'channelType_' + dict.dictCode}" name="channelType" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'channelType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~channelType-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">开闸模式：</label>
+                <div class="col-sm-8">
+                    <select name="openingMode" class="form-control m-b" th:with="type=${@dict.getType('item_face_device_opening_mode')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+                </div>
+            </div><!--~openingMode-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">在线状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_online_state')}">
+                        <input type="radio" th:id="${'onlineState_' + dict.dictCode}" name="onlineState" th:value="${dict.dictValue}" th:checked="${dict.default}">
+                        <label th:for="${'onlineState_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~onlineState-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/deviceinfo";
+        /**~初始化验证*/
+        $("#form-deviceinfo-add").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-deviceinfo-add').serialize());
+            }
+        }
+
+        /*用户管理-新增-选择机构树*/
+        function selectDeptTree() {
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId+"/all";
+            var options = {
+                title: '选择项目',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("#treeId").val(body.find('#treeId').val());
+                $("#treeName").val(body.find('#treeName').val());
+                layer.close(index);
+            }
+        }
+    </script>
+</body>
+</html>

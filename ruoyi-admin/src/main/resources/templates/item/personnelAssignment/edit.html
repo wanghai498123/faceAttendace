@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改人员设备分配')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-personnelAssignment-edit" th:object="${devPersonnelAssignment}">
+            <input name="deviceId" th:field="*{deviceId}" type="hidden"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">设备名：</label>
+                <div class="col-sm-8">
+                    <input name="deviceId" th:field="*{deviceId}" class="form-control" type="text" >
+                </div>
+            </div><!--~deviceId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">员工：</label>
+                <div class="col-sm-8">
+                    <input name="personnelId" th:field="*{personnelId}" class="form-control" type="text" >
+                </div>
+            </div><!--~personnelId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否同步数据：</label>
+                <div class="col-sm-8">
+                    <input name="syndate" th:field="*{syndate}" class="form-control" type="text" >
+                </div>
+            </div><!--~syndate-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/personnelAssignment";
+        /**~初始化验证*/
+        $("#form-personnelAssignment-edit").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-personnelAssignment-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改人员信息')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: citySet-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-personnelinfo-edit" th:object="${perPersonnelinfo}">
+            <input name="personnelId" th:field="*{personnelId}" type="hidden"><!--~--><!--~columnBegin-->
+            <input name="deptId"  type="hidden"  th:field="*{deptId}" id="treeId"/>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">项目或者班组：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="deptName" onclick="selectDeptTree()" id="treeName" th:field="*{deptName}" required>
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div><!--~deptId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <input name="personnelName" th:field="*{personnelName}" class="form-control" type="text">
+                </div>
+            </div><!--~personnelName-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">识别卡号：</label>
+                <div class="col-sm-8">
+                    <input name="cardNumber" th:field="*{cardNumber}" class="form-control" type="text">
+                </div>
+            </div><!--~cardNumber-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">身份证号：</label>
+                <div class="col-sm-8">
+                    <input name="idNumber" th:field="*{idNumber}" class="form-control" type="text">
+                </div>
+            </div><!--~idNumber-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出生日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="birthday" th:value="${#dates.format(perPersonnelinfo.birthday, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div><!--~birthday-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户性别：</label>
+                <div class="col-sm-8">
+                    <select name="sex" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{sex}"></option>
+                    </select>
+                </div>
+            </div><!--~sex-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">联系方式：</label>
+                <div class="col-sm-8">
+                    <input name="contact" th:field="*{contact}" class="form-control" type="text">
+                </div>
+            </div><!--~contact-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">详细地址：</label>
+                <div class="col-sm-8">
+                    <input name="fullAddress"  id="fullAddress" value=" "  th:field="*{fullAddress}" class="form-control" type="text">
+                </div>
+            </div><!--~fullAddress-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">人员类型：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('item_personnel_type')}">
+                        <input type="radio" th:id="${'personnelType_' + dict.dictCode}" name="personnelType" th:value="${dict.dictValue}" th:field="*{personnelType}">
+                        <label th:for="${'personnelType_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~personnelType-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">岗位：</label>
+                <div class="col-sm-8">
+                    <select name="postId" class="form-control m-b" th:with="type=${@dict.getType('item_personnel_post')}">
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{postId}"></option>
+                    </select>
+                </div>
+            </div><!--~postId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">关键岗位：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('item_personnel_key_job')}">
+                        <input type="radio" th:id="${'keyJob_' + dict.dictCode}" name="keyJob" th:value="${dict.dictValue}" th:field="*{keyJob}">
+                        <label th:for="${'keyJob_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~keyJob-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">进场时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="approachTime" th:value="${#dates.format(perPersonnelinfo.approachTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div><!--~approachTime-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">有效期至：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="validity" th:value="${#dates.format(perPersonnelinfo.validity, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text">
+                    </div>
+                </div>
+            </div><!--~validity-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">数据下发：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('item_personnel_data_dissemination')}">
+                        <input type="radio" th:id="${'dataDissemination_' + dict.dictCode}" name="dataDissemination" th:value="${dict.dictValue}" th:field="*{dataDissemination}">
+                        <label th:for="${'dataDissemination_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~dataDissemination-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">人脸：</label>
+                <div class="col-sm-8">
+                    <input name="facePath" th:field="*{facePath}" class="form-control" type="text">
+                </div>
+            </div><!--~facePath-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">证件：</label>
+                <div class="col-sm-8">
+                    <input name="certificatePath" th:field="*{certificatePath}" class="form-control" type="text">
+                </div>
+            </div><!--~certificatePath-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">在职状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('item_personnel_incumbency')}">
+                        <input type="radio" th:id="${'incumbency_' + dict.dictCode}" name="incumbency" th:value="${dict.dictValue}" th:field="*{incumbency}">
+                        <label th:for="${'incumbency_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~incumbency-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">数据下发状态：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('sys_common_status')}">
+                        <input type="radio" th:id="${'dataState_' + dict.dictCode}" name="dataState" th:value="${dict.dictValue}" th:field="*{dataState}" >
+                        <label th:for="${'dataState_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~dataState-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: citySet-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/personnelinfo";
+        $("#fullAddress").click(function (e) {
+            SelCity(this,e);
+        });
+         /**~初始化验证*/
+        $("#form-personnelinfo-edit").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-personnelinfo-edit').serialize());
+            }
+        }
+
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId+"/3";
+            var options = {
+                title: '选择项目',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+            var body = layer.getChildFrame('body', index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            layer.close(index);
+            }
+        }
+
+        $("input[name='birthday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+
+        $("input[name='dutyTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='approachTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='validity']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

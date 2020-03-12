@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${packageName}.mapper.${ClassName}Mapper">
+    
+    <resultMap type="${ClassName}" id="${ClassName}Result"><!--~--><!--~columnBegin-->
+#foreach ($column in $columns)
+       <result property="${column.javaField}"    column="${column.columnName}"    /><!--~${column.columnName}-->
+#end
+#foreach ($column in $joinColumns)
+#if($column.joinType==1)
+       <association property="${column.targetBusinessName}"    column="${column.columnName}"  javaType="${column.targetClassName}" resultMap="${column.targetBusinessName}Result"/><!--~${column.columnName}-->
+#end
+#end
+#if($table.tree)
+        <result property="parentName" column="parent_name" />
+#end
+    </resultMap>
+
+#foreach ($column in $joinColumns)
+#if($column.joinType==1)
+    <resultMap type="${column.targetClassName}" id="${column.targetBusinessName}Result"><!--~--><!--~columnBegin-->
+        <id     property="${column.targetJavaField}"   column="${column.targetColumnName}"     />
+        <result property="${column.targetValueJavaField}" column="${column.targetValueColumnName}"   />
+    </resultMap>
+#end
+#end
+
+#if($tplCategory!="join")
+    <sql id="select${ClassName}Vo">
+        select#foreach($column in $columns) $businessName.$column.columnName#if($velocityCount != $columns.size()),#end#end
+#foreach($column in $joinColumns)
+#if($column.joinType==1)
+, ${column.targetBusinessName}.${column.targetColumnName}, ${column.targetBusinessName}.${column.targetValueColumnName}
+#end
+#end
+
+        from ${tableName} ${businessName}
+#foreach($column in $joinColumns)
+#if($column.joinType==1)
+        left join ${column.targetTableName} ${column.targetBusinessName} on ${businessName}.${column.columnName} = ${column.targetBusinessName}.${column.targetColumnName}
+#end
+#end
+    </sql>
+
+    <select id="select${ClassName}List" parameterType="${ClassName}" resultMap="${ClassName}Result">
+        <include refid="select${ClassName}Vo"/>
+        <where><!--~--><!--~columnBegin_select-->
+#foreach($column in $columns)
+#set($queryType=$column.queryType)
+#set($javaField=$column.javaField)
+#set($javaType=$column.javaType)
+#set($columnName=$column.columnName)
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#if($column.query)
+#if($column.queryType == "EQ")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName = #{$javaField}</if><!--~${column.columnName}_select-->
+#elseif($queryType == "NE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName != #{$javaField}</if><!--~${column.columnName}_select-->
+#elseif($queryType == "GT")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName &gt; #{$javaField}</if><!--~${column.columnName}_select-->
+#elseif($queryType == "GTE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName &gt;= #{$javaField}</if><!--~${column.columnName}_select-->
+#elseif($queryType == "LT")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName &lt; #{$javaField}</if><!--~${column.columnName}_select-->
+#elseif($queryType == "LTE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName &lt;= #{$javaField}</if><!--~${column.columnName}_select-->
+#elseif($queryType == "LIKE")
+            <if test="$javaField != null #if($javaType == 'String' ) and $javaField.trim() != ''#end"> and ${businessName}.$columnName like concat('%', #{$javaField}, '%')</if><!--~${column.columnName}_select-->
+#elseif($queryType == "BETWEEN")
+            <if test="params.begin$AttrName != null and params.begin$AttrName != '' and params.end$AttrName != null and params.end$AttrName != ''"> and ${businessName}.$columnName between #{params.begin$AttrName} and #{params.end$AttrName}</if><!--~${column.columnName}_select-->
+#end
+#end
+#end
+        </where>
+#if($table.tree)
+        order by ${tree_parent_code}
+#end
+    </select>
+
+    <select id="select${ClassName}All"  resultMap="${ClassName}Result">
+        <include refid="select${ClassName}Vo"/>
+    </select>
+    
+    <select id="select${ClassName}ById" parameterType="${pkColumn.javaType}" resultMap="${ClassName}Result">
+#if($table.crud)
+        <include refid="select${ClassName}Vo"/>
+        where ${businessName}.${pkColumn.columnName} = #{${pkColumn.javaField}}
+#elseif($table.tree)
+        select#foreach($column in $columns) t.$column.columnName,#end p.${tree_name} as parent_name
+        from ${tableName} t
+        left join ${tableName} p on p.${pkColumn.columnName} = t.${tree_parent_code}
+        where t.${pkColumn.columnName} = #{${pkColumn.javaField}}
+#end
+    </select>
+        
+    <insert id="insert${ClassName}" parameterType="${ClassName}"#if($pkColumn.increment) useGeneratedKeys="true" keyProperty="$pkColumn.javaField"#end>
+        insert into ${tableName}
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+#foreach($column in $columns)
+#if(($column.columnName != $pkColumn.columnName || !$pkColumn.increment))
+            <if test="$column.javaField != null #if($column.javaType == 'String' ) and $column.javaField != ''#end">$column.columnName,</if><!--~${column.columnName}_insert1-->
+#end
+#end
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+#foreach($column in $columns)
+#if(($column.columnName != $pkColumn.columnName || !$pkColumn.increment))
+            <if test="$column.javaField != null #if($column.javaType == 'String' ) and $column.javaField != ''#end">#{$column.javaField},</if><!--~${column.columnName}_insert2-->
+#end
+#end
+         </trim>
+    </insert>
+
+    <update id="update${ClassName}" parameterType="${ClassName}">
+        update ${tableName}
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+#foreach($column in $columns)
+#if($column.columnName != $pkColumn.columnName)
+            <if test="$column.javaField != null #if($column.javaType == 'String' ) and $column.javaField != ''#end">$column.columnName = #{$column.javaField},</if><!--~${column.columnName}_update-->
+#end
+#end
+        </trim>
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </update>
+
+    <delete id="delete${ClassName}ById" parameterType="${pkColumn.javaType}">
+        delete from ${tableName} where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </delete>
+
+    <delete id="delete${ClassName}ByIds" parameterType="String">
+        delete from ${tableName} where ${pkColumn.columnName} in 
+        <foreach item="${pkColumn.javaField}" collection="array" open="(" separator="," close=")">
+            #{${pkColumn.javaField}}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+#foreach($action in $actions)
+#set($ActionName=$action.actionName.substring(0,1).toUpperCase() + ${action.actionName.substring(1)})
+#set($ByField="")
+#if($action.javaField!="")
+  #set($ByField="By"+${action.javaField})
+#end
+#if($action.mouldName=="Unique")
+    <select id="${action.actionName}" parameterType="${action.javaType}" resultMap="${ClassName}Result">
+		select ${pkColumn.javaField}, ${action.javaField} from ${tableName} where ${action.columnName}=#{${action.javaField}}
+	</select><!--~${action.actionName}-->
+#else
+    <update id="update${action.javaField}" parameterType="${ClassName}">
+       update ${tableName}
+         <set>
+         	${action.columnName} = #{${action.javaField}}
+         </set>
+        where ${pkColumn.columnName} = #{${pkColumn.javaField}}
+    </update><!--~${action.actionName}-->
+#end
+#end
+
+#else
+#foreach ($column in $joinColumns)
+#if($column.joinType==4)
+#set($TargetJavaField=$column.targetJavaField.substring(0,1).toUpperCase() + ${column.targetJavaField.substring(1)})
+
+    <select id="select${ClassName}ListBy${TargetJavaField}" parameterType="Long"  resultMap="${ClassName}Result">
+        select ${joinColumns.get(0).targetColumnName}, ${joinColumns.get(1).targetColumnName} from ${tableName}
+        where ${column.targetColumnName}=#{${column.targetJavaField}}
+	</select>
+
+    <delete id="delete${ClassName}By${TargetJavaField}" parameterType="Long">
+		delete from ${tableName} where ${column.targetColumnName}=#{${column.targetJavaField}}
+	</delete>
+
+    <delete id="delete${ClassName}By${TargetJavaField}s" parameterType="Long">
+        delete from ${tableName} where ${column.targetColumnName} in
+        <foreach collection="array" item="${column.targetJavaField}" open="(" separator="," close=")">
+            #{${column.targetJavaField}}
+        </foreach>
+    </delete>
+
+    <select id="count${ClassName}By${TargetJavaField}" resultType="Integer">
+	    select count(1) from ${tableName} where ${column.targetColumnName}=#{${column.targetJavaField}}
+    </select>
+
+#end
+#end
+    <insert id="batch${ClassName}">
+        insert into ${tableName}(${joinColumns.get(0).targetColumnName}, ${joinColumns.get(1).targetColumnName}) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.${joinColumns.get(0).targetJavaField}},#{item.${joinColumns.get(1).targetJavaField}})
+        </foreach>
+    </insert>
+#end
+</mapper>

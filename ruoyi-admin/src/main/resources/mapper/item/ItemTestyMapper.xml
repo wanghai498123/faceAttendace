@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.ItemTestyMapper">
+    
+    <resultMap type="ItemTesty" id="ItemTestyResult"><!--~--><!--~columnBegin-->
+       <result property="testyId"    column="testy_id"    /><!--~testy_id-->
+       <result property="parentId"    column="parent_id"    /><!--~parent_id-->
+       <result property="ancestors"    column="ancestors"    /><!--~ancestors-->
+       <result property="testyName"    column="testy_name"    /><!--~testy_name-->
+       <result property="orderNum"    column="order_num"    /><!--~order_num-->
+       <result property="leader"    column="leader"    /><!--~leader-->
+       <result property="phone"    column="phone"    /><!--~phone-->
+       <result property="email"    column="email"    /><!--~email-->
+       <result property="status"    column="status"    /><!--~status-->
+       <result property="delFlag"    column="del_flag"    /><!--~del_flag-->
+       <result property="deptType"    column="dept_type"    /><!--~dept_type-->
+       <result property="createBy"    column="create_by"    /><!--~create_by-->
+       <result property="createTime"    column="create_time"    /><!--~create_time-->
+       <result property="updateBy"    column="update_by"    /><!--~update_by-->
+       <result property="updateTime"    column="update_time"    /><!--~update_time-->
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+
+    <sql id="selectItemTestyVo">
+        select testy.testy_id, testy.parent_id, testy.ancestors, testy.testy_name, testy.order_num, testy.leader, testy.phone, testy.email, testy.status, testy.del_flag, testy.dept_type, testy.create_by, testy.create_time, testy.update_by, testy.update_time       from item_testy testy
+    </sql>
+
+    <select id="selectItemTestyList" parameterType="ItemTesty" resultMap="ItemTestyResult">
+        <include refid="selectItemTestyVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="parentId != null "> and testy.parent_id = #{parentId}</if><!--~parent_id_select-->
+            <if test="ancestors != null  and ancestors != ''"> and testy.ancestors = #{ancestors}</if><!--~ancestors_select-->
+            <if test="testyName != null  and testyName != ''"> and testy.testy_name like concat('%', #{testyName}, '%')</if><!--~testy_name_select-->
+            <if test="orderNum != null "> and testy.order_num = #{orderNum}</if><!--~order_num_select-->
+            <if test="leader != null  and leader != ''"> and testy.leader = #{leader}</if><!--~leader_select-->
+            <if test="phone != null  and phone != ''"> and testy.phone = #{phone}</if><!--~phone_select-->
+            <if test="email != null  and email != ''"> and testy.email = #{email}</if><!--~email_select-->
+            <if test="status != null  and status != ''"> and testy.status = #{status}</if><!--~status_select-->
+            <if test="deptType != null  and deptType != ''"> and testy.dept_type = #{deptType}</if><!--~dept_type_select-->
+        </where>
+        order by parent_id
+    </select>
+
+    <select id="selectItemTestyAll"  resultMap="ItemTestyResult">
+        <include refid="selectItemTestyVo"/>
+    </select>
+    
+    <select id="selectItemTestyById" parameterType="Long" resultMap="ItemTestyResult">
+        select t.testy_id, t.parent_id, t.ancestors, t.testy_name, t.order_num, t.leader, t.phone, t.email, t.status, t.del_flag, t.dept_type, t.create_by, t.create_time, t.update_by, t.update_time, p.testy_name as parent_name
+        from item_testy t
+        left join item_testy p on p.testy_id = t.parent_id
+        where t.testy_id = #{testyId}
+    </select>
+        
+    <insert id="insertItemTesty" parameterType="ItemTesty" useGeneratedKeys="true" keyProperty="testyId">
+        insert into item_testy
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="parentId != null ">parent_id,</if><!--~parent_id_insert1-->
+            <if test="ancestors != null  and ancestors != ''">ancestors,</if><!--~ancestors_insert1-->
+            <if test="testyName != null  and testyName != ''">testy_name,</if><!--~testy_name_insert1-->
+            <if test="orderNum != null ">order_num,</if><!--~order_num_insert1-->
+            <if test="leader != null  and leader != ''">leader,</if><!--~leader_insert1-->
+            <if test="phone != null  and phone != ''">phone,</if><!--~phone_insert1-->
+            <if test="email != null  and email != ''">email,</if><!--~email_insert1-->
+            <if test="status != null  and status != ''">status,</if><!--~status_insert1-->
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if><!--~del_flag_insert1-->
+            <if test="deptType != null  and deptType != ''">dept_type,</if><!--~dept_type_insert1-->
+            <if test="createBy != null  and createBy != ''">create_by,</if><!--~create_by_insert1-->
+            <if test="createTime != null ">create_time,</if><!--~create_time_insert1-->
+            <if test="updateBy != null  and updateBy != ''">update_by,</if><!--~update_by_insert1-->
+            <if test="updateTime != null ">update_time,</if><!--~update_time_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="parentId != null ">#{parentId},</if><!--~parent_id_insert2-->
+            <if test="ancestors != null  and ancestors != ''">#{ancestors},</if><!--~ancestors_insert2-->
+            <if test="testyName != null  and testyName != ''">#{testyName},</if><!--~testy_name_insert2-->
+            <if test="orderNum != null ">#{orderNum},</if><!--~order_num_insert2-->
+            <if test="leader != null  and leader != ''">#{leader},</if><!--~leader_insert2-->
+            <if test="phone != null  and phone != ''">#{phone},</if><!--~phone_insert2-->
+            <if test="email != null  and email != ''">#{email},</if><!--~email_insert2-->
+            <if test="status != null  and status != ''">#{status},</if><!--~status_insert2-->
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if><!--~del_flag_insert2-->
+            <if test="deptType != null  and deptType != ''">#{deptType},</if><!--~dept_type_insert2-->
+            <if test="createBy != null  and createBy != ''">#{createBy},</if><!--~create_by_insert2-->
+            <if test="createTime != null ">#{createTime},</if><!--~create_time_insert2-->
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if><!--~update_by_insert2-->
+            <if test="updateTime != null ">#{updateTime},</if><!--~update_time_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateItemTesty" parameterType="ItemTesty">
+        update item_testy
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="parentId != null ">parent_id = #{parentId},</if><!--~parent_id_update-->
+            <if test="ancestors != null  and ancestors != ''">ancestors = #{ancestors},</if><!--~ancestors_update-->
+            <if test="testyName != null  and testyName != ''">testy_name = #{testyName},</if><!--~testy_name_update-->
+            <if test="orderNum != null ">order_num = #{orderNum},</if><!--~order_num_update-->
+            <if test="leader != null  and leader != ''">leader = #{leader},</if><!--~leader_update-->
+            <if test="phone != null  and phone != ''">phone = #{phone},</if><!--~phone_update-->
+            <if test="email != null  and email != ''">email = #{email},</if><!--~email_update-->
+            <if test="status != null  and status != ''">status = #{status},</if><!--~status_update-->
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if><!--~del_flag_update-->
+            <if test="deptType != null  and deptType != ''">dept_type = #{deptType},</if><!--~dept_type_update-->
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if><!--~create_by_update-->
+            <if test="createTime != null ">create_time = #{createTime},</if><!--~create_time_update-->
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if><!--~update_by_update-->
+            <if test="updateTime != null ">update_time = #{updateTime},</if><!--~update_time_update-->
+        </trim>
+        where testy_id = #{testyId}
+    </update>
+
+    <delete id="deleteItemTestyById" parameterType="Long">
+        delete from item_testy where testy_id = #{testyId}
+    </delete>
+
+    <delete id="deleteItemTestyByIds" parameterType="String">
+        delete from item_testy where testy_id in 
+        <foreach item="testyId" collection="array" open="(" separator="," close=")">
+            #{testyId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+
+</mapper>

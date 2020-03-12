@@ -1,0 +1,331 @@
+package ${packageName}.service.impl;
+
+import java.util.List;
+#if($table.tree)
+import java.util.ArrayList;
+import com.ruoyi.common.core.domain.Ztree;
+#end
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime' || $column.javaField == 'updateTime')
+import com.ruoyi.common.utils.DateUtils;
+#break
+#end
+#end
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import ${packageName}.mapper.${ClassName}Mapper;
+import ${packageName}.domain.${ClassName};
+import ${packageName}.service.I${ClassName}Service;
+import com.ruoyi.common.core.text.Convert;
+import com.ruoyi.common.utils.StringUtils;
+#if($joinColumns.size()>0)
+import java.util.ArrayList;
+import org.springframework.transaction.annotation.Transactional;
+#end
+#foreach ($column in $joinColumns)
+#if($column.joinType==2)
+import ${column.joinPackageName}.domain.${column.joinClassName};
+import ${column.joinPackageName}.mapper.${column.joinClassName}Mapper;
+#elseif($column.joinType==4)
+import ${column.targetPackageName}.domain.${column.targetClassName};
+import ${column.targetPackageName}.mapper.${column.targetClassName}Mapper;
+#end
+#end
+
+/**
+ * ${functionName}Service业务层处理
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+@Service
+public class ${ClassName}ServiceImpl implements I${ClassName}Service 
+{
+    @Autowired
+    private ${ClassName}Mapper ${className}Mapper;
+#foreach ($column in $joinColumns)
+#if($column.joinType==2||$column.joinType==2)
+     @Autowired
+     private ${column.joinClassName}Mapper ${column.joinBusinessName}Mapper;
+#elseif($column.joinType==4)
+    @Autowired
+    private ${column.targetClassName}Mapper ${column.targetClassName}Mapper;
+#end
+#end
+
+#if($tplCategory!="join")
+    /**
+     * 查询${functionName}
+     * 
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return ${functionName}
+     */
+    @Override
+    public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+        return ${className}Mapper.select${ClassName}ById(${pkColumn.javaField});
+    }
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}
+     */
+    @Override
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className})
+    {
+        return ${className}Mapper.select${ClassName}List(${className});
+    }
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}
+     */
+    @Override
+    public List<${ClassName}> select${ClassName}All()
+    {
+        return ${className}Mapper.select${ClassName}All();
+    }
+
+    /**
+     * 新增${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Override
+#if($joinColumns.size()>0)
+    @Transactional
+#end
+    public int insert${ClassName}(${ClassName} ${className})
+    {
+#foreach ($column in $columns)
+#if($column.javaField == 'createTime')
+        ${className}.setCreateTime(DateUtils.getNowDate());
+#end
+#end
+        int rows =${className}Mapper.insert${ClassName}(${className});
+#foreach ($column in $joinColumns)
+#if($column.joinType==2)
+#set($AttrName=$column.joinBusinessName.substring(0,1).toUpperCase() + ${column.joinBusinessName.substring(1)})
+        insert${AttrName}(${className});
+#end
+#end
+        return rows;
+    }
+#foreach ($column in $joinColumns)
+#if($column.joinType==2)
+#set($JoinBusinessName=$column.joinBusinessName.substring(0,1).toUpperCase() + ${column.joinBusinessName.substring(1)})
+#set($JavaField=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($TargetJavaField=$column.targetJavaField.substring(0,1).toUpperCase() + ${column.targetJavaField.substring(1)})
+#set($pkColumnJavaField=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+    /**
+    * ${functionName}
+    *
+    * @param ${className} ${functionName}
+    */
+    public void insert${JoinBusinessName}(${ClassName} ${className})
+    {
+        ${column.targetJavaType}[] ${column.targetJavaField}s = ${className}.get${TargetJavaField}s();
+        if (StringUtils.isNotNull(${column.targetJavaField}s))
+        {
+            List<$column.joinClassName> list = new ArrayList<$column.joinClassName>();
+            for ($column.targetJavaType $column.targetJavaField : ${column.targetJavaField}s)
+            {
+                ${column.joinClassName} jo = new ${column.joinClassName}();
+                jo.set${pkColumnJavaField}(${className}.get${pkColumnJavaField}());
+                jo.set${TargetJavaField}( $column.targetJavaField);
+                list.add(jo);
+            }
+            if (list.size() > 0)
+            {
+                ${column.joinBusinessName}Mapper.batch${column.joinClassName}(list);
+            }
+        }
+    }
+#end
+#end
+
+    /**
+     * 修改${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    @Override
+#if($joinColumns.size()>0)
+    @Transactional
+#end
+    public int update${ClassName}(${ClassName} ${className})
+    {
+#foreach ($column in $columns)
+#if($column.javaField == 'updateTime')
+        ${className}.setUpdateTime(DateUtils.getNowDate());
+#end
+#end
+
+#foreach ($column in $joinColumns)
+#if($column.joinType==2)
+#set($AttrName=$column.joinBusinessName.substring(0,1).toUpperCase() + ${column.joinBusinessName.substring(1)})
+#set($JavaField=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+        ${column.joinBusinessName}Mapper.delete${column.joinClassName}By${JavaField}(${className}.get${JavaField}());
+         insert${AttrName}(${className});
+#end
+#end
+        return ${className}Mapper.update${ClassName}(${className});
+    }
+
+    /**
+     * 删除${functionName}对象
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    @Override
+#if($joinColumns.size()>0)
+    @Transactional
+#end
+    public int delete${ClassName}ByIds(String ids)
+    {
+#foreach ($column in $joinColumns)
+#if($column.joinType==2||$column.joinType==3)
+#set($JavaField=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+         Long[] ${column.javaField}s = Convert.toLongArray(ids);
+        ${column.joinBusinessName}Mapper.delete${column.joinClassName}By${JavaField}s(${column.javaField}s);
+#end
+#end
+        return ${className}Mapper.delete${ClassName}ByIds(Convert.toStrArray(ids));
+    }
+
+    /**
+     * 删除${functionName}信息
+     * 
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return 结果
+     */
+    @Override
+#if($joinColumns.size()>0)
+    @Transactional
+#end
+    public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField})
+    {
+#foreach ($column in $joinColumns)
+#if($column.joinType==2)
+#set($JavaField=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+       ${column.joinBusinessName}Mapper.delete${column.joinClassName}By${JavaField}( ${pkColumn.javaField});
+#end
+#end
+        return ${className}Mapper.delete${ClassName}ById(${pkColumn.javaField});
+    }
+#if($table.tree)
+    /**
+     * 查询${functionName}树列表
+     *
+     * @return 所有${functionName}信息
+     */
+    @Override
+    public List<Ztree> generate${ClassName}TreeDate(List<${ClassName}> ${className}List,boolean isCheck)
+    {
+        List<Ztree> ztrees = new ArrayList<Ztree>();
+        for (${ClassName} ${className} : ${className}List)
+        {
+            Ztree ztree = new Ztree();
+#set($TreeCode=$treeCode.substring(0,1).toUpperCase() + ${treeCode.substring(1)})
+#set($TreeParentCode=$treeParentCode.substring(0,1).toUpperCase() + ${treeParentCode.substring(1)})
+#set($TreeName=$treeName.substring(0,1).toUpperCase() + ${treeName.substring(1)})
+            ztree.setId(${className}.get${TreeCode}());
+            ztree.setpId(${className}.get${TreeParentCode}());
+            ztree.setName(${className}.get${TreeName}());
+            ztree.setTitle(${className}.get${TreeName}());
+            if (isCheck)
+            {
+                ztree.setChecked(${className}.isFlag());
+            }
+            ztrees.add(ztree);
+        }
+        return ztrees;
+    }
+#end
+
+#if($pkColumn.javaField.length() > 2 && $pkColumn.javaField.substring(1,2).matches("[A-Z]"))
+#set($pkAttrName=$pkColumn.javaField)
+#else
+#set($pkAttrName=$pkColumn.javaField.substring(0,1).toUpperCase() + ${pkColumn.javaField.substring(1)})
+#end
+
+         /**~*/ /**~actionBegin*/
+#foreach($action in $actions)
+#set($ActionName=$action.actionName.substring(0,1).toUpperCase() + ${action.actionName.substring(1)})
+#set($AttrName=$action.javaField.substring(0,1).toUpperCase() + ${action.javaField.substring(1)})
+#set($ByField="")
+#if($action.javaField!="")
+  #set($ByField="By"+${action.javaField})
+#end
+#if($action.mouldName=="Unique")
+        /**
+         * ${action.actionComment}
+         *
+         * @param ${className} ${functionName}
+         * @return 结果
+         */
+        @Override
+        public String ${action.actionName}(${ClassName} ${className})
+        {
+           Long ${pkColumn.javaField} = StringUtils.isNull(${className}.get${pkAttrName}()) ? -1L : ${className}.get${pkAttrName}();
+           ${ClassName} info = ${className}Mapper.${action.actionName}(${className}.get${AttrName}());
+           if (StringUtils.isNotNull(info) && info.get${pkAttrName}().longValue() != ${pkColumn.javaField}.longValue())
+            {
+               return "1";
+            }
+             return "0";
+        }/**~${action.actionName}*/
+#else
+        /**
+         * ${action.actionComment}
+         *
+         * @param ${className} ${functionName}
+         * @return 结果2
+         */
+        @Override
+       public int ${action.actionName}${ClassName}(${ClassName} ${className})
+       {
+           return ${className}Mapper.update${action.javaField}(${ClassName} ${className});
+       }/**~${action.actionName}*/
+#end
+#end
+
+#else
+#foreach ($column in $joinColumns)
+#if($column.joinType==4)
+#set($JavaField=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($TargetJavaField=$column.targetJavaField.substring(0,1).toUpperCase() + ${column.targetJavaField.substring(1)})
+#set($TargetBusinessName=$column.targetBusinessName.substring(0,1).toUpperCase() + ${column.targetBusinessName.substring(1)})
+       /**
+        * 根据ID查询
+        *
+        * @param
+        * @return
+        */
+        public List<${column.targetClassName}> select${TargetBusinessName}sBy${JavaField}(${column.javaType} ${column.javaField})
+        {
+            List<${ClassName}> ${className}s = ${className}Mapper.select${ClassName}ListBy${JavaField}(${column.javaField});
+            List<${column.targetClassName}> ${column.targetBusinessName}s = ${column.targetClassName}Mapper.select${column.targetClassName}All();
+            for (${column.targetClassName} ${column.targetBusinessName} : ${column.targetBusinessName}s)
+            {
+                for (${ClassName} ${className} : ${className}s)
+                {
+                    if (${column.targetBusinessName}.get${TargetJavaField}().longValue() == ${className}.get${TargetJavaField}().longValue())
+                    {
+                        ${column.targetBusinessName}.setFlag(true);
+                        break;
+                    }
+                }
+            }
+            return ${column.targetBusinessName}s;
+        }
+#end
+#end
+#end
+}

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.DevDeviceTeamMapper">
+    
+    <resultMap type="DevDeviceTeam" id="DevDeviceTeamResult"><!--~--><!--~columnBegin-->
+        <result property="deviceTeamId"    column="device_team_id"    /><!--~device_team_id-->
+        <result property="parentId"    column="parent_id"    /><!--~parent_id-->
+        <result property="orderNum"    column="order_num"    /><!--~order_num-->
+        <result property="teamName"    column="team_name"    /><!--~team_name-->
+        <result property="teamScript"    column="team_script"    /><!--~team_script-->
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectDevDeviceTeamVo">
+        select device_team_id, parent_id, order_num, team_name, team_script from dev_device_team
+    </sql>
+
+    <select id="selectDevDeviceTeamList" parameterType="DevDeviceTeam" resultMap="DevDeviceTeamResult">
+        <include refid="selectDevDeviceTeamVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="parentId != null "> and parent_id = #{parentId}</if><!--~parent_id_select-->
+            <if test="orderNum != null "> and order_num = #{orderNum}</if><!--~order_num_select-->
+            <if test="teamName != null  and teamName != ''"> and team_name like concat('%', #{teamName}, '%')</if><!--~team_name_select-->
+            <if test="teamScript != null  and teamScript != ''"> and team_script = #{teamScript}</if><!--~team_script_select-->
+        </where>
+        order by parent_id
+    </select>
+    
+    <select id="selectDevDeviceTeamById" parameterType="Long" resultMap="DevDeviceTeamResult">
+        select t.device_team_id, t.parent_id, t.order_num, t.team_name, t.team_script, p.team_name as parent_name
+        from dev_device_team t
+        left join dev_device_team p on p.device_team_id = t.parent_id
+        where t.device_team_id = #{deviceTeamId}
+    </select>
+        
+    <insert id="insertDevDeviceTeam" parameterType="DevDeviceTeam" useGeneratedKeys="true" keyProperty="deviceTeamId">
+        insert into dev_device_team
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="parentId != null ">parent_id,</if><!--~parent_id_insert1-->
+            <if test="orderNum != null ">order_num,</if><!--~order_num_insert1-->
+            <if test="teamName != null  and teamName != ''">team_name,</if><!--~team_name_insert1-->
+            <if test="teamScript != null  and teamScript != ''">team_script,</if><!--~team_script_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="parentId != null ">#{parentId},</if><!--~parent_id_insert2-->
+            <if test="orderNum != null ">#{orderNum},</if><!--~order_num_insert2-->
+            <if test="teamName != null  and teamName != ''">#{teamName},</if><!--~team_name_insert2-->
+            <if test="teamScript != null  and teamScript != ''">#{teamScript},</if><!--~team_script_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateDevDeviceTeam" parameterType="DevDeviceTeam">
+        update dev_device_team
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="parentId != null ">parent_id = #{parentId},</if><!--~parent_id_update-->
+            <if test="orderNum != null ">order_num = #{orderNum},</if><!--~order_num_update-->
+            <if test="teamName != null  and teamName != ''">team_name = #{teamName},</if><!--~team_name_update-->
+            <if test="teamScript != null  and teamScript != ''">team_script = #{teamScript},</if><!--~team_script_update-->
+        </trim>
+        where device_team_id = #{deviceTeamId}
+    </update>
+
+    <delete id="deleteDevDeviceTeamById" parameterType="Long">
+        delete from dev_device_team where device_team_id = #{deviceTeamId}
+    </delete>
+
+    <delete id="deleteDevDeviceTeamByIds" parameterType="String">
+        delete from dev_device_team where device_team_id in 
+        <foreach item="deviceTeamId" collection="array" open="(" separator="," close=")">
+            #{deviceTeamId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

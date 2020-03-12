@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改异常来访')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-exceptionalRecord-edit" th:object="${vtrExceptionalRecord}">
+            <input name="recordId" th:field="*{recordId}" type="hidden"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">登记照片：</label>
+                <div class="col-sm-8">
+                    <input name="registrationPhoto" th:field="*{registrationPhoto}" class="form-control" type="text" >
+                </div>
+            </div><!--~registrationPhoto-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">打卡照片：</label>
+                <div class="col-sm-8">
+                    <input name="punchCardPhotos" th:field="*{punchCardPhotos}" class="form-control" type="text" >
+                </div>
+            </div><!--~punchCardPhotos-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">打卡时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="punchCardTime" th:value="${#dates.format(vtrExceptionalRecord.punchCardTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~punchCardTime-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">状态(进场，出场)：</label>
+                <div class="col-sm-8">
+                    <div class="radio-box" th:each="dict : ${@dict.getType('item_face_device_channel_type')}">
+                        <input type="radio" th:id="${'punchCardState_' + dict.dictCode}" name="punchCardState" th:value="${dict.dictValue}" th:field="*{punchCardState}" >
+                        <label th:for="${'punchCardState_' + dict.dictCode}" th:text="${dict.dictLabel}"></label>
+                    </div>
+                </div>
+            </div><!--~punchCardState-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/exceptionalRecord";
+        /**~初始化验证*/
+        $("#form-exceptionalRecord-edit").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-exceptionalRecord-edit').serialize());
+            }
+        }
+
+        $("input[name='punchCardTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

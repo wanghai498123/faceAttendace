@@ -1,0 +1,124 @@
+package ${packageName}.service;
+
+import ${packageName}.domain.${ClassName};
+import java.util.List;
+#if($table.tree)
+import com.ruoyi.common.core.domain.Ztree;
+#end
+#foreach ($column in $joinColumns)
+#if($column.joinType==4)
+import ${column.targetPackageName}.domain.${column.targetClassName};
+#end
+#end
+
+/**
+ * ${functionName}Service接口
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface I${ClassName}Service 
+{
+#if($tplCategory!="join")
+    /**
+     * 查询${functionName}
+     * 
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return ${functionName}
+     */
+    public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField});
+
+    /**
+     * 查询${functionName}列表
+     * 
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className});
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    public List<${ClassName}> select${ClassName}All();
+
+    /**
+     * 新增${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int insert${ClassName}(${ClassName} ${className});
+
+    /**
+     * 修改${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int update${ClassName}(${ClassName} ${className});
+
+    /**
+     * 批量删除${functionName}
+     * 
+     * @param ids 需要删除的数据ID
+     * @return 结果
+     */
+    public int delete${ClassName}ByIds(String ids);
+
+    /**
+     * 删除${functionName}信息
+     * 
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return 结果
+     */
+    public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField});
+#if($table.tree)
+    /**
+     * 查询${functionName}树列表
+     *
+     * @return 所有${functionName}信息
+     */
+    public List<Ztree> generate${ClassName}TreeDate(List<${ClassName}> ${className}List,boolean isCheck);
+#end
+
+    /**~*/ /**~actionBegin*/
+#foreach($action in $actions)
+#set($ActionName=$action.actionName.substring(0,1).toUpperCase() + ${action.actionName.substring(1)})
+#if($action.mouldName=="Unique")
+    /**
+     * ${action.actionComment}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public String ${action.actionName}(${ClassName} ${className});/**~${action.actionName}*/
+#else
+    /**
+     * ${action.actionComment}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int ${action.actionName}(${ClassName} ${className});/**~${action.actionName}*/
+#end
+#end
+
+#else
+#foreach ($column in $joinColumns)
+#if($column.joinType==4)
+#set($javaField=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#set($TargetBusinessName=$column.targetBusinessName.substring(0,1).toUpperCase() + ${column.targetBusinessName.substring(1)})
+    /**
+     * 根据ID查询
+     *
+     * @param
+     * @return
+     */
+    public List<${column.targetClassName}> select${TargetBusinessName}sBy${javaField}(${column.javaType} ${column.javaField});
+#end
+#end
+#end
+}

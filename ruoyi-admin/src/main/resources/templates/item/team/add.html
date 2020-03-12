@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增设备分组')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-team-add"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">父菜单ID：</label>
+                <div class="col-sm-8">
+                    <input name="parentId" class="form-control" type="text" >
+                </div>
+            </div><!--~parentId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">显示顺序：</label>
+                <div class="col-sm-8">
+                    <input name="orderNum" class="form-control" type="text" >
+                </div>
+            </div><!--~orderNum-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分组名称：</label>
+                <div class="col-sm-8">
+                    <input name="teamName" class="form-control" type="text" >
+                </div>
+            </div><!--~teamName-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">分组描叙：</label>
+                <div class="col-sm-8">
+                    <input name="teamScript" class="form-control" type="text" >
+                </div>
+            </div><!--~teamScript-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/team";
+
+        /**~初始化验证*/
+        $("#form-team-add").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-team-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

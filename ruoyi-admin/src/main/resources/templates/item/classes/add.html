@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增考勤班次')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-classes-add"><!--~--><!--~columnBegin-->
+            <input name="deptId" type="hidden" id="treeId"/>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">公司：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input name="deptName" onclick="selectDeptTree()" id="treeName" type="text" placeholder="请选择归属建筑公司" class="form-control" required>
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div><!--~deptId-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">班次：</label>
+                <div class="col-sm-8">
+                    <input name="classesName" class="form-control" type="text" >
+                </div>
+            </div><!--~classesName-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">开始周期1：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="start1" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~start1-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">结束周期1：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="end1" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~end1-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">开始周期2：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="start2" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~start2-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">结束周期2：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="end2" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~end2-->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">计为工时：</label>
+                <div class="col-sm-8">
+                    <input name="workingHours" class="form-control" type="text" >
+                </div>
+            </div><!--~workingHours-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/classes"
+        /**~初始化验证*/
+        $("#form-classes-add").validate({
+            focusCleanup: true
+        });/**~validate*/
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-classes-add').serialize());
+            }
+        }
+
+        function selectDeptTree() {
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId+"/1";
+            var options = {
+                title: '选择项目',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("#treeId").val(body.find('#treeId').val());
+                $("#treeName").val(body.find('#treeName').val());
+                layer.close(index);
+            }
+        }
+
+        $("input[name='start1']").datetimepicker({
+            format: "HH:mm",
+            minView: 1,
+            autoclose: true
+        });
+
+        $("input[name='end1']").datetimepicker({
+            format: "HH:mm",
+            minView: 0,
+            autoclose: true
+        });
+
+        $("input[name='start2']").datetimepicker({
+            format: "HH:mm",
+            minView: 0,
+            autoclose: true
+        });
+
+        $("input[name='end2']").datetimepicker({
+            format: "HH:mm",
+            minView: 0,
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

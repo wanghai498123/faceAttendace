@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('考勤日报列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul><!--~--><!--~columnBegin-->
+                            <li>
+                                <p>班组：</p>
+                                <input type="text" name="teamName"/>
+                            </li><!--~teamName-->
+                            <li>
+                                <p>姓名：</p>
+                                <input type="text" name="personnelName"/>
+                            </li><!--~personnelName-->
+                            <li class="select-time">
+                                <p>统计日期：</p>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="params[beginAttendanceTime]"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="params[endAttendanceTime]"/>
+                            </li><!--~attendanceTime-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="item:daterecord:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        /**~初始化字典*/
+        /**~dictInit*/
+        var prefix = ctx + "item/daterecord";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "考勤日报",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'recordId', 
+                    title : '标识',
+                    visible: false
+                },/**~*//**~columnBegin*/
+                {
+                    field : 'deptId',
+                    title : '机构名称'
+                },/**~deptId*/
+                {
+                    field : 'personnelId',
+                    title : '人员'
+                },/**~personnelId*/
+                {
+                    field : 'teamName',
+                    title : '班组'
+                },/**~teamName*/
+                {
+                    field : 'personnelName',
+                    title : '姓名'
+                },/**~personnelName*/
+                {
+                    field : 'attendanceTime',
+                    title : '统计日期'
+                },/**~attendanceTime*/
+                {
+                    field : 'punchCardTime1',
+                    title : '上班打卡时间'
+                },/**~punchCardTime1*/
+                {
+                    field : 'punchCardTime2',
+                    title : '休息打卡时间'
+                },/**~punchCardTime2*/
+                {
+                    field : 'punchCardTime3',
+                    title : '休息上班时间'
+                },/**~punchCardTime3*/
+                {
+                    field : 'punchCardTime4',
+                    title : '下班打卡时间'
+                },/**~punchCardTime4*/
+                {
+                    field : 'lateness',
+                    title : '迟到次数'
+                },/**~lateness*/
+                {
+                    field : 'lateArrivalTime',
+                    title : '迟到时长'
+                },/**~lateArrivalTime*/
+                {
+                    field : 'earlyRetirementTimes',
+                    title : '早退次数'
+                },/**~earlyRetirementTimes*/
+                {
+                    field : 'arlyRetirementTime',
+                    title : '早退时长'
+                },/**~arlyRetirementTime*/
+                {
+                    field : 'neglectWork',
+                    title : '旷工'
+                },/**~neglectWork*/
+                {
+                    field : 'effectiveWorkingDay',
+                    title : '有效工日'
+                }/**~effectiveWorkingDay*/
+              ]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecClassesMapper">
+    
+    <resultMap type="RecClasses" id="RecClassesResult"><!--~--><!--~columnBegin-->
+        <result property="classesId"    column="classes_id"    /><!--~classes_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="classesName"    column="classes_name"    /><!--~classes_name-->
+        <result property="start1"    column="start1"    /><!--~start1-->
+        <result property="end1"    column="end1"    /><!--~end1-->
+        <result property="start2"    column="start2"    /><!--~start2-->
+        <result property="end2"    column="end2"    /><!--~end2-->
+        <result property="workingHours"    column="working_hours"    /><!--~working_hours-->
+        <result property="deptName" column="dept_name"   />
+        <result property="classesName"    column="classes_name"    />
+    </resultMap>
+
+    <sql id="selectRecClassesVo">
+        select classes_id, u.dept_id, classes_name, start1, end1, start2, end2, working_hours,
+        d.dept_name
+          from rec_classes u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="sselectRecClassesAll" resultMap="RecClassesResult">
+        <include refid="selectRecClassesVo"/>
+    </select>
+
+    <select id="selectRecClassesList" parameterType="RecClasses" resultMap="RecClassesResult">
+        <include refid="selectRecClassesVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="classesName != null  and classesName != ''"> and classes_name like concat('%', #{classesName}, '%')</if><!--~classes_name_select-->
+            <if test="start1 != null "> and start1 = #{start1}</if><!--~start1_select-->
+            <if test="end1 != null "> and end1 = #{end1}</if><!--~end1_select-->
+            <if test="start2 != null "> and start2 = #{start2}</if><!--~start2_select-->
+            <if test="end2 != null "> and end2 = #{end2}</if><!--~end2_select-->
+            <if test="workingHours != null "> and working_hours = #{workingHours}</if><!--~working_hours_select-->
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+    
+    <select id="selectRecClassesById" parameterType="Long" resultMap="RecClassesResult">
+        <include refid="selectRecClassesVo"/>
+        where classes_id = #{classesId}
+    </select>
+        
+    <insert id="insertRecClasses" parameterType="RecClasses" useGeneratedKeys="true" keyProperty="classesId">
+        insert into rec_classes
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="classesName != null  and classesName != ''">classes_name,</if><!--~classes_name_insert1-->
+            <if test="start1 != null ">start1,</if><!--~start1_insert1-->
+            <if test="end1 != null ">end1,</if><!--~end1_insert1-->
+            <if test="start2 != null ">start2,</if><!--~start2_insert1-->
+            <if test="end2 != null ">end2,</if><!--~end2_insert1-->
+            <if test="workingHours != null ">working_hours,</if><!--~working_hours_insert1-->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="classesName != null  and classesName != ''">#{classesName},</if><!--~classes_name_insert2-->
+            <if test="start1 != null ">#{start1},</if><!--~start1_insert2-->
+            <if test="end1 != null ">#{end1},</if><!--~end1_insert2-->
+            <if test="start2 != null ">#{start2},</if><!--~start2_insert2-->
+            <if test="end2 != null ">#{end2},</if><!--~end2_insert2-->
+            <if test="workingHours != null ">#{workingHours},</if><!--~working_hours_insert2-->
+        </trim>
+    </insert>
+
+    <update id="updateRecClasses" parameterType="RecClasses">
+        update rec_classes
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="classesName != null  and classesName != ''">classes_name = #{classesName},</if><!--~classes_name_update-->
+            <if test="start1 != null ">start1 = #{start1},</if><!--~start1_update-->
+            <if test="end1 != null ">end1 = #{end1},</if><!--~end1_update-->
+            <if test="start2 != null ">start2 = #{start2},</if><!--~start2_update-->
+            <if test="end2 != null ">end2 = #{end2},</if><!--~end2_update-->
+            <if test="workingHours != null ">working_hours = #{workingHours},</if><!--~working_hours_update-->
+        </trim>
+        where classes_id = #{classesId}
+    </update>
+
+    <delete id="deleteRecClassesById" parameterType="Long">
+        delete from rec_classes where classes_id = #{classesId}
+    </delete>
+
+    <delete id="deleteRecClassesByIds" parameterType="String">
+        delete from rec_classes where classes_id in 
+        <foreach item="classesId" collection="array" open="(" separator="," close=")">
+            #{classesId}
+        </foreach>
+    </delete>
+    
+</mapper>

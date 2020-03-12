@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改访客预约')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-vtrSubscribe-edit" th:object="${vtrSubscribe}">
+            <input name="subscribeId" th:field="*{subscribeId}" type="hidden"><!--~--><!--~columnBegin-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">机构：</label>
+                <div class="col-sm-8">
+                    <input name="deptId" th:field="*{deptId}" class="form-control" type="text" >
+                </div>
+            </div><!--~deptId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <input name="visitorName" th:field="*{visitorName}" class="form-control" type="text" >
+                </div>
+            </div><!--~visitorName-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">识别卡号：</label>
+                <div class="col-sm-8">
+                    <input name="cardNumber" th:field="*{cardNumber}" class="form-control" type="text" >
+                </div>
+            </div><!--~cardNumber-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">身份证号：</label>
+                <div class="col-sm-8">
+                    <input name="idNumber" th:field="*{idNumber}" class="form-control" type="text" >
+                </div>
+            </div><!--~idNumber-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">出生日期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="birthday" th:value="${#dates.format(vtrSubscribe.birthday, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~birthday-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">用户性别：</label>
+                <div class="col-sm-8">
+                    <select name="sex" class="form-control m-b" th:with="type=${@dict.getType('sys_user_sex')}" >
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{sex}"></option>
+                    </select>
+                </div>
+            </div><!--~sex-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">联系方式：</label>
+                <div class="col-sm-8">
+                    <input name="contact" th:field="*{contact}" class="form-control" type="text" >
+                </div>
+            </div><!--~contact-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">省：</label>
+                <div class="col-sm-8">
+                    <input name="province" th:field="*{province}" class="form-control" type="text" >
+                </div>
+            </div><!--~province-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">市：</label>
+                <div class="col-sm-8">
+                    <input name="city" th:field="*{city}" class="form-control" type="text" >
+                </div>
+            </div><!--~city-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">区：</label>
+                <div class="col-sm-8">
+                    <input name="region" th:field="*{region}" class="form-control" type="text" >
+                </div>
+            </div><!--~region-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">详细地址：</label>
+                <div class="col-sm-8">
+                    <input name="fullAddress" th:field="*{fullAddress}" class="form-control" type="text" >
+                </div>
+            </div><!--~fullAddress-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">人员类型：</label>
+                <div class="col-sm-8">
+                    <select name="personnelType" class="form-control m-b" th:with="type=${@dict.getType('item_personnel_type')}" >
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}" th:field="*{personnelType}"></option>
+                    </select>
+                </div>
+            </div><!--~personnelType-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">在岗时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="dutyTime" th:value="${#dates.format(vtrSubscribe.dutyTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~dutyTime-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">进场时间：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="approachTime" th:value="${#dates.format(vtrSubscribe.approachTime, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~approachTime-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">有效期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="validity" th:value="${#dates.format(vtrSubscribe.validity, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~validity-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">数据下发：</label>
+                <div class="col-sm-8">
+                    <input name="dataDissemination" th:field="*{dataDissemination}" class="form-control" type="text" >
+                </div>
+            </div><!--~dataDissemination-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">人脸：</label>
+                <div class="col-sm-8">
+                    <input name="facePath" th:field="*{facePath}" class="form-control" type="text" >
+                </div>
+            </div><!--~facePath-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">证件：</label>
+                <div class="col-sm-8">
+                    <input name="certificatePath" th:field="*{certificatePath}" class="form-control" type="text" >
+                </div>
+            </div><!--~certificatePath-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">数据状态：</label>
+                <div class="col-sm-8">
+                    <input name="dataState" th:field="*{dataState}" class="form-control" type="text" >
+                </div>
+            </div><!--~dataState-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">头像路径：</label>
+                <div class="col-sm-8">
+                    <input name="avatar" th:field="*{avatar}" class="form-control" type="text" >
+                </div>
+            </div><!--~avatar-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/vtrSubscribe";
+        /**~初始化验证*/
+        $("#form-vtrSubscribe-edit").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-vtrSubscribe-edit').serialize());
+            }
+        }
+
+        $("input[name='birthday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='dutyTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='approachTime']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("input[name='validity']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

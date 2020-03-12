@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改自定义假日设置')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-customizeHolidayInfo-edit" th:object="${recCustomizeHolidayInfo}">
+            <input name="customizeHolidayInfoId" th:field="*{customizeHolidayInfoId}" type="hidden"><!--~--><!--~columnBegin-->
+            <input name="deptId"  type="hidden"  th:field="*{deptId}" id="treeId"/>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">机构：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input class="form-control" type="text" name="deptName" onclick="selectDeptTree()" id="treeName" th:field="*{deptName}" required>
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div><!--~deptId-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">自定义假期：</label>
+                <div class="col-sm-8">
+                    <div class="input-group date">
+                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        <input name="holiday" th:value="${#dates.format(recCustomizeHolidayInfo.holiday, 'yyyy-MM-dd')}" class="form-control" placeholder="yyyy-MM-dd" type="text" >
+                    </div>
+                </div>
+            </div><!--~holiday-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">假期名称：</label>
+                <div class="col-sm-8">
+                    <input name="holidayName" th:field="*{holidayName}" class="form-control" type="text" >
+                </div>
+            </div><!--~holidayName-->
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">假期描叙：</label>
+                <div class="col-sm-8">
+                    <input name="holidayScript" th:field="*{holidayScript}" class="form-control" type="text" >
+                </div>
+            </div><!--~holidayScript-->
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "item/customizeHolidayInfo";
+        /**~初始化验证*/
+        $("#form-customizeHolidayInfo-edit").validate({
+            onkeyup: false,
+            rules:{
+                end:{}
+            },
+            messages: {
+            end:{}
+            },
+            focusCleanup: true
+        });/**~validate*/
+
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-customizeHolidayInfo-edit').serialize());
+            }
+        }
+
+        $("input[name='holiday']").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId+"/1";
+            var options = {
+                title: '选择项目',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+                var body = layer.getChildFrame('body', index);
+                $("#treeId").val(body.find('#treeId').val());
+                $("#treeName").val(body.find('#treeName').val());
+                layer.close(index);
+        }
+    </script>
+</body>
+</html>

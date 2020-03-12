@@ -1,0 +1,139 @@
+package ${packageName}.mapper;
+
+import ${packageName}.domain.${ClassName};
+import java.util.List;
+
+/**
+ * ${functionName}Mapper接口
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+public interface ${ClassName}Mapper 
+{
+#if($tplCategory!="join")
+    /**
+     * 查询${functionName}
+     * 
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return ${functionName}
+     */
+    public ${ClassName} select${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField});
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    public List<${ClassName}> select${ClassName}List(${ClassName} ${className});
+
+    /**
+     * 查询${functionName}列表
+     *
+     * @param ${className} ${functionName}
+     * @return ${functionName}集合
+     */
+    public List<${ClassName}> select${ClassName}All();
+
+    /**
+     * 新增${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int insert${ClassName}(${ClassName} ${className});
+
+    /**
+     * 修改${functionName}
+     * 
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int update${ClassName}(${ClassName} ${className});
+
+    /**
+     * 删除${functionName}
+     * 
+     * @param ${pkColumn.javaField} ${functionName}ID
+     * @return 结果
+     */
+    public int delete${ClassName}ById(${pkColumn.javaType} ${pkColumn.javaField});
+
+    /**
+     * 批量删除${functionName}
+     * 
+     * @param ${pkColumn.javaField}s 需要删除的数据ID
+     * @return 结果
+     */
+    public int delete${ClassName}ByIds(String[] ${pkColumn.javaField}s);
+
+    /**~*/ /**~actionBegin*/
+#foreach($action in $actions)
+#set($ActionName=$action.actionName.substring(0,1).toUpperCase() + ${action.actionName.substring(1)})
+#set($ByField="")
+#if($action.javaField!="")
+  #set($ByField="By"+${action.javaField})
+#end
+#if($action.mouldName=="Unique")
+    /**
+     * ${action.actionComment}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public ${ClassName} ${action.actionName}(${action.javaType} ${action.javaField});/**~${action.actionName}*/
+#else
+    /**
+     * ${action.actionComment}
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int update${action.javaField}(${ClassName} ${className});/**~${action.actionName}*/
+#end
+#end
+
+#else
+#foreach ($column in $joinColumns)
+#if($column.joinType==4)
+#set($TargetJavaField=$column.targetJavaField.substring(0,1).toUpperCase() + ${column.targetJavaField.substring(1)})
+    /**
+     * 查询${functionName}
+     *
+     * @param
+     * @return ${functionName}
+     */
+    public List<${ClassName}> select${ClassName}ListBy${TargetJavaField}(Long ${column.targetJavaField});
+    /**
+     * 通过ID删除
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int delete${ClassName}By${TargetJavaField}(Long ${column.targetJavaField});
+    /**
+     * 批量删除
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int delete${ClassName}By${TargetJavaField}s(Long[] ids);
+    /**
+     * 通过ID查询使用数量
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int count${ClassName}By${TargetJavaField}(Long ${column.targetJavaField});
+#end
+#end
+    /**
+     * 批量
+     *
+     * @param ${className} ${functionName}
+     * @return 结果
+     */
+    public int batch${ClassName}(List<${ClassName}> ${className}List);
+#end
+}

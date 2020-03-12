@@ -1,0 +1,124 @@
+package ${packageName}.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ruoyi.common.annotation.Excel;
+#if($table.crud)
+import com.ruoyi.common.core.domain.BaseEntity;
+#elseif($table.tree)
+import com.ruoyi.common.core.domain.TreeEntity;
+#end
+#foreach ($import in $importList)
+import ${import};
+#end
+#foreach ($column in $joinColumns)
+#if($column.joinType==1)
+import ${column.targetPackageName}.domain.${column.targetClassName};
+#end
+#end
+
+/**
+ * ${functionName}对象 ${tableName}
+ * 
+ * @author ${author}
+ * @date ${datetime}
+ */
+#if($table.crud)
+#set($Entity="BaseEntity")
+#elseif($table.tree)
+#set($Entity="TreeEntity")
+#end
+public class ${ClassName} extends ${Entity}
+{
+    private static final long serialVersionUID = 1L;
+
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+    /** $column.columnComment */
+#if($column.list)
+#set($parentheseIndex=$column.columnComment.indexOf("（"))
+#if($parentheseIndex != -1)
+#set($comment=$column.columnComment.substring(0, $parentheseIndex))
+#else
+#set($comment=$column.columnComment)
+#end
+#if($parentheseIndex != -1)
+    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+#elseif($column.javaType == 'Date')
+    @Excel(name = "${comment}", width = 30, dateFormat = "yyyy-MM-dd")
+#else
+    @Excel(name = "${comment}")
+#end
+#end
+    private $column.javaType $column.javaField;
+#end
+#end
+
+#foreach ($column in $columns)
+#if(!$table.isSuperColumn($column.javaField))
+#if($column.javaField.length() > 2 && $column.javaField.substring(1,2).matches("[A-Z]"))
+#set($AttrName=$column.javaField)
+#else
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#end
+    public void set${AttrName}($column.javaType $column.javaField) 
+    {
+        this.$column.javaField = $column.javaField;
+    }
+    public $column.javaType get${AttrName}() 
+    {
+        return $column.javaField;
+    }
+#end
+#end
+
+#foreach ($column in $joinColumns)
+#if($column.joinType==1)
+    private $column.targetClassName $column.targetBusinessName;
+#set($AttrName=$column.targetBusinessName.substring(0,1).toUpperCase() + ${column.targetBusinessName.substring(1)})
+    public void set${AttrName}($column.targetClassName $column.targetBusinessName)
+    {
+        this.$column.targetBusinessName = $column.targetBusinessName;
+    }
+    public $column.targetClassName get${AttrName}()
+    {
+        return $column.targetBusinessName;
+    }
+#elseif($column.joinType==2)
+#set($AttrName=$column.targetJavaField.substring(0,1).toUpperCase() + ${column.targetJavaField.substring(1)})
+    private ${column.targetJavaType}[] ${column.targetJavaField}s;
+    public void set${AttrName}s(${column.targetJavaType}[] ${column.targetJavaField}s)
+    {
+        this.${column.targetJavaField}s = ${column.targetJavaField}s;
+    }
+    public ${column.targetJavaType}[] get${AttrName}s()
+    {
+        return ${column.targetJavaField}s;
+    }
+#end
+#end
+
+    /** 用户是否存在此标识 默认不存在 用于多选时选中*/
+    private boolean flag = false;
+    public boolean isFlag(){
+        return flag;
+    }
+
+    public void setFlag(boolean flag){
+        this.flag = flag;
+    }
+
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+#foreach ($column in $columns)
+#if($column.javaField.length() > 2 && $column.javaField.substring(1,2).matches("[A-Z]"))
+#set($AttrName=$column.javaField)
+#else
+#set($AttrName=$column.javaField.substring(0,1).toUpperCase() + ${column.javaField.substring(1)})
+#end
+#end
+            .toString();
+    }
+}

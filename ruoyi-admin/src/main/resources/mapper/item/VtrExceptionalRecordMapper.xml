@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.VtrExceptionalRecordMapper">
+    
+    <resultMap type="VtrExceptionalRecord" id="VtrExceptionalRecordResult"><!--~--><!--~columnBegin-->
+        <result property="recordId"    column="record_id"    /><!--~record_id-->
+        <result property="registrationPhoto"    column="registration_photo"    /><!--~registration_photo-->
+        <result property="punchCardPhotos"    column="punch_card_photos"    /><!--~punch_card_photos-->
+        <result property="punchCardTime"    column="punch_card_time"    /><!--~punch_card_time-->
+        <result property="punchCardState"    column="punch_card_state"    /><!--~punch_card_state-->
+    </resultMap>
+
+    <sql id="selectVtrExceptionalRecordVo">
+        select record_id, registration_photo, punch_card_photos, punch_card_time, punch_card_state from vtr_exceptional_record
+    </sql>
+
+    <select id="selectVtrExceptionalRecordList" parameterType="VtrExceptionalRecord" resultMap="VtrExceptionalRecordResult">
+        <include refid="selectVtrExceptionalRecordVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="registrationPhoto != null  and registrationPhoto != ''"> and registration_photo = #{registrationPhoto}</if><!--~registration_photo_select-->
+            <if test="punchCardPhotos != null  and punchCardPhotos != ''"> and punch_card_photos = #{punchCardPhotos}</if><!--~punch_card_photos_select-->
+            <if test="punchCardTime != null "> and punch_card_time = #{punchCardTime}</if><!--~punch_card_time_select-->
+            <if test="punchCardState != null  and punchCardState != ''"> and punch_card_state = #{punchCardState}</if><!--~punch_card_state_select-->
+        </where>
+    </select>
+    
+    <select id="selectVtrExceptionalRecordById" parameterType="Long" resultMap="VtrExceptionalRecordResult">
+        <include refid="selectVtrExceptionalRecordVo"/>
+        where record_id = #{recordId}
+    </select>
+        
+    <insert id="insertVtrExceptionalRecord" parameterType="VtrExceptionalRecord" useGeneratedKeys="true" keyProperty="recordId">
+        insert into vtr_exceptional_record
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="registrationPhoto != null  and registrationPhoto != ''">registration_photo,</if><!--~registration_photo_insert1-->
+            <if test="punchCardPhotos != null  and punchCardPhotos != ''">punch_card_photos,</if><!--~punch_card_photos_insert1-->
+            <if test="punchCardTime != null ">punch_card_time,</if><!--~punch_card_time_insert1-->
+            <if test="punchCardState != null  and punchCardState != ''">punch_card_state,</if><!--~punch_card_state_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="registrationPhoto != null  and registrationPhoto != ''">#{registrationPhoto},</if><!--~registration_photo_insert2-->
+            <if test="punchCardPhotos != null  and punchCardPhotos != ''">#{punchCardPhotos},</if><!--~punch_card_photos_insert2-->
+            <if test="punchCardTime != null ">#{punchCardTime},</if><!--~punch_card_time_insert2-->
+            <if test="punchCardState != null  and punchCardState != ''">#{punchCardState},</if><!--~punch_card_state_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateVtrExceptionalRecord" parameterType="VtrExceptionalRecord">
+        update vtr_exceptional_record
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="registrationPhoto != null  and registrationPhoto != ''">registration_photo = #{registrationPhoto},</if><!--~registration_photo_update-->
+            <if test="punchCardPhotos != null  and punchCardPhotos != ''">punch_card_photos = #{punchCardPhotos},</if><!--~punch_card_photos_update-->
+            <if test="punchCardTime != null ">punch_card_time = #{punchCardTime},</if><!--~punch_card_time_update-->
+            <if test="punchCardState != null  and punchCardState != ''">punch_card_state = #{punchCardState},</if><!--~punch_card_state_update-->
+        </trim>
+        where record_id = #{recordId}
+    </update>
+
+    <delete id="deleteVtrExceptionalRecordById" parameterType="Long">
+        delete from vtr_exceptional_record where record_id = #{recordId}
+    </delete>
+
+    <delete id="deleteVtrExceptionalRecordByIds" parameterType="String">
+        delete from vtr_exceptional_record where record_id in 
+        <foreach item="recordId" collection="array" open="(" separator="," close=")">
+            #{recordId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

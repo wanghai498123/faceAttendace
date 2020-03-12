@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.RecPersonnelLeaveMapper">
+    
+    <resultMap type="RecPersonnelLeave" id="RecPersonnelLeaveResult"><!--~--><!--~columnBegin-->
+        <result property="personnelLeaveId"    column="personnel_leave_id"    /><!--~personnel_leave_id-->
+        <result property="personnelId"    column="personnel_id"    /><!--~personnel_id-->
+        <result property="leaveDate"    column="leave_date"    /><!--~leave_date-->
+        <result property="leaveType"    column="leave_type"    /><!--~leave_type-->
+        <result property="leaveScript"    column="leave_script"    /><!--~leave_script-->
+    </resultMap>
+
+    <sql id="selectRecPersonnelLeaveVo">
+        select personnel_leave_id, personnel_id, leave_date, leave_type, leave_script from rec_personnel_leave
+    </sql>
+
+    <select id="selectRecPersonnelLeaveList" parameterType="RecPersonnelLeave" resultMap="RecPersonnelLeaveResult">
+        <include refid="selectRecPersonnelLeaveVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="personnelId != null "> and personnel_id = #{personnelId}</if><!--~personnel_id_select-->
+            <if test="leaveDate != null "> and leave_date = #{leaveDate}</if><!--~leave_date_select-->
+            <if test="leaveType != null  and leaveType != ''"> and leave_type = #{leaveType}</if><!--~leave_type_select-->
+            <if test="leaveScript != null  and leaveScript != ''"> and leave_script = #{leaveScript}</if><!--~leave_script_select-->
+        </where>
+    </select>
+    
+    <select id="selectRecPersonnelLeaveById" parameterType="Long" resultMap="RecPersonnelLeaveResult">
+        <include refid="selectRecPersonnelLeaveVo"/>
+        where personnel_leave_id = #{personnelLeaveId}
+    </select>
+        
+    <insert id="insertRecPersonnelLeave" parameterType="RecPersonnelLeave" useGeneratedKeys="true" keyProperty="personnelLeaveId">
+        insert into rec_personnel_leave
+        <trim prefix="(" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert1-->
+            <if test="personnelId != null ">personnel_id,</if><!--~personnel_id_insert1-->
+            <if test="leaveDate != null ">leave_date,</if><!--~leave_date_insert1-->
+            <if test="leaveType != null  and leaveType != ''">leave_type,</if><!--~leave_type_insert1-->
+            <if test="leaveScript != null  and leaveScript != ''">leave_script,</if><!--~leave_script_insert1-->
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=","><!--~--><!--~columnBegin_insert2-->
+            <if test="personnelId != null ">#{personnelId},</if><!--~personnel_id_insert2-->
+            <if test="leaveDate != null ">#{leaveDate},</if><!--~leave_date_insert2-->
+            <if test="leaveType != null  and leaveType != ''">#{leaveType},</if><!--~leave_type_insert2-->
+            <if test="leaveScript != null  and leaveScript != ''">#{leaveScript},</if><!--~leave_script_insert2-->
+         </trim>
+    </insert>
+
+    <update id="updateRecPersonnelLeave" parameterType="RecPersonnelLeave">
+        update rec_personnel_leave
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="personnelId != null ">personnel_id = #{personnelId},</if><!--~personnel_id_update-->
+            <if test="leaveDate != null ">leave_date = #{leaveDate},</if><!--~leave_date_update-->
+            <if test="leaveType != null  and leaveType != ''">leave_type = #{leaveType},</if><!--~leave_type_update-->
+            <if test="leaveScript != null  and leaveScript != ''">leave_script = #{leaveScript},</if><!--~leave_script_update-->
+        </trim>
+        where personnel_leave_id = #{personnelLeaveId}
+    </update>
+
+    <delete id="deleteRecPersonnelLeaveById" parameterType="Long">
+        delete from rec_personnel_leave where personnel_leave_id = #{personnelLeaveId}
+    </delete>
+
+    <delete id="deleteRecPersonnelLeaveByIds" parameterType="String">
+        delete from rec_personnel_leave where personnel_leave_id in 
+        <foreach item="personnelLeaveId" collection="array" open="(" separator="," close=")">
+            #{personnelLeaveId}
+        </foreach>
+    </delete>
+
+    <!--~--> <!--~actionBegin-->
+</mapper>

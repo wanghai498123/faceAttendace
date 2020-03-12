@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.item.mapper.ItemCompanyMapper">
+    
+    <resultMap type="ItemCompany" id="ItemCompanyResult"><!--~--><!--~columnBegin-->
+        <result property="companyId"    column="company_id"    /><!--~company_id-->
+        <result property="deptId"    column="dept_id"    /><!--~dept_id-->
+        <result property="companyName"    column="company_name"    /><!--~company_name-->
+        <result property="contact"    column="contact"    /><!--~contact-->
+        <result property="phonenumber"    column="phonenumber"    /><!--~phonenumber-->
+        <result property="email"    column="email"    /><!--~email-->
+        <result property="province"    column="province"    /><!--~province-->
+        <result property="city"    column="city"    /><!--~city-->
+        <result property="region"    column="region"    /><!--~region-->
+        <result property="fullAddress"    column="full_address"    /><!--~full_address-->
+        <result property="taxpayerNumber"    column="taxpayer_number"    /><!--~taxpayer_number-->
+        <result property="creditCode"    column="credit_code"    /><!--~credit_code-->
+        <result property="registeredCapital"    column="registered_capital"    /><!--~registered_capital-->
+        <result property="unittype"    column="unittype"    /><!--~unittype-->
+        <result property="bankCode"    column="bank_code"    /><!--~bank_code-->
+        <result property="subbranch"    column="subbranch"    /><!--~subbranch-->
+        <result property="bankNumber"    column="bank_number"    /><!--~bank_number-->
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+    <sql id="selectItemCompanyVo">
+        select company_id, u.dept_id,company_name, contact, phonenumber, u.email, province, city, region, full_address, taxpayer_number, credit_code, registered_capital, unittype, bank_code, subbranch, bank_number,
+        d.dept_name
+         from item_company u join sys_dept d on u.dept_id = d.dept_id
+    </sql>
+
+    <select id="selectItemCompanyList" parameterType="ItemCompany" resultMap="ItemCompanyResult">
+        <include refid="selectItemCompanyVo"/>
+        <where><!--~--><!--~columnBegin_select-->
+            <if test="deptId != null and deptId != 0">
+                AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{deptId},ancestors) ))
+            </if><!--~dept_id_select-->
+            <if test="companyName != null  and companyName != ''"> and company_name like concat('%', #{companyName}, '%')</if><!--~company_name_select-->
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if><!--~contact_select-->
+            <if test="phonenumber != null  and phonenumber != ''"> and phonenumber = #{phonenumber}</if><!--~phonenumber_select-->
+            <if test="email != null  and email != ''"> and email = #{email}</if><!--~email_select-->
+            <if test="province != null  and province != ''"> and province = #{province}</if><!--~province_select-->
+            <if test="city != null  and city != ''"> and city = #{city}</if><!--~city_select-->
+            <if test="region != null  and region != ''"> and region = #{region}</if><!--~region_select-->
+            <if test="fullAddress != null  and fullAddress != ''"> and full_address = #{fullAddress}</if><!--~full_address_select-->
+            <if test="taxpayerNumber != null  and taxpayerNumber != ''"> and taxpayer_number = #{taxpayerNumber}</if><!--~taxpayer_number_select-->
+            <if test="creditCode != null  and creditCode != ''"> and credit_code = #{creditCode}</if><!--~credit_code_select-->
+            <if test="registeredCapital != null  and registeredCapital != ''"> and registered_capital = #{registeredCapital}</if><!--~registered_capital_select-->
+            <if test="unittype != null  and unittype != ''"> and unittype = #{unittype}</if><!--~unittype_select-->
+            <if test="bankCode != null  and bankCode != ''"> and bank_code = #{bankCode}</if><!--~bank_code_select-->
+            <if test="subbranch != null  and subbranch != ''"> and subbranch = #{subbranch}</if><!--~subbranch_select-->
+            <if test="bankNumber != null  and bankNumber != ''"> and bank_number = #{bankNumber}</if><!--~bank_number_select-->
+            <!-- 数据范围过滤 -->
+            ${params.dataScope}
+        </where>
+    </select>
+    
+    <select id="selectItemCompanyById" parameterType="Long" resultMap="ItemCompanyResult">
+        <include refid="selectItemCompanyVo"/>
+        where company_id = #{companyId}
+    </select>
+        
+    <insert id="insertItemCompany" parameterType="ItemCompany">
+        insert into item_company
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            company_id,<!--~--><!--~columnBegin_insert1-->
+            <if test="deptId != null ">dept_id,</if><!--~dept_id_insert1-->
+            <if test="companyName != null  and companyName != ''">company_name,</if><!--~company_name_insert1-->
+            <if test="contact != null  and contact != ''">contact,</if><!--~contact_insert1-->
+            <if test="phonenumber != null  and phonenumber != ''">phonenumber,</if><!--~phonenumber_insert1-->
+            <if test="email != null  and email != ''">email,</if><!--~email_insert1-->
+            <if test="province != null  and province != ''">province,</if><!--~province_insert1-->
+            <if test="city != null  and city != ''">city,</if><!--~city_insert1-->
+            <if test="region != null  and region != ''">region,</if><!--~region_insert1-->
+            <if test="fullAddress != null  and fullAddress != ''">full_address,</if><!--~full_address_insert1-->
+            <if test="taxpayerNumber != null  and taxpayerNumber != ''">taxpayer_number,</if><!--~taxpayer_number_insert1-->
+            <if test="creditCode != null  and creditCode != ''">credit_code,</if><!--~credit_code_insert1-->
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital,</if><!--~registered_capital_insert1-->
+            <if test="unittype != null  and unittype != ''">unittype,</if><!--~unittype_insert1-->
+            <if test="bankCode != null  and bankCode != ''">bank_code,</if><!--~bank_code_insert1-->
+            <if test="subbranch != null  and subbranch != ''">subbranch,</if><!--~subbranch_insert1-->
+            <if test="bankNumber != null  and bankNumber != ''">bank_number,</if><!--~bank_number_insert1-->
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{companyId},<!--~--><!--~columnBegin_insert2-->
+            <if test="deptId != null ">#{deptId},</if><!--~dept_id_insert2-->
+            <if test="companyName != null  and companyName != ''">#{companyName},</if><!--~company_name_insert2-->
+            <if test="contact != null  and contact != ''">#{contact},</if><!--~contact_insert2-->
+            <if test="phonenumber != null  and phonenumber != ''">#{phonenumber},</if><!--~phonenumber_insert2-->
+            <if test="email != null  and email != ''">#{email},</if><!--~email_insert2-->
+            <if test="province != null  and province != ''">#{province},</if><!--~province_insert2-->
+            <if test="city != null  and city != ''">#{city},</if><!--~city_insert2-->
+            <if test="region != null  and region != ''">#{region},</if><!--~region_insert2-->
+            <if test="fullAddress != null  and fullAddress != ''">#{fullAddress},</if><!--~full_address_insert2-->
+            <if test="taxpayerNumber != null  and taxpayerNumber != ''">#{taxpayerNumber},</if><!--~taxpayer_number_insert2-->
+            <if test="creditCode != null  and creditCode != ''">#{creditCode},</if><!--~credit_code_insert2-->
+            <if test="registeredCapital != null  and registeredCapital != ''">#{registeredCapital},</if><!--~registered_capital_insert2-->
+            <if test="unittype != null  and unittype != ''">#{unittype},</if><!--~unittype_insert2-->
+            <if test="bankCode != null  and bankCode != ''">#{bankCode},</if><!--~bank_code_insert2-->
+            <if test="subbranch != null  and subbranch != ''">#{subbranch},</if><!--~subbranch_insert2-->
+            <if test="bankNumber != null  and bankNumber != ''">#{bankNumber},</if><!--~bank_number_insert2-->
+        </trim>
+    </insert>
+
+    <update id="updateItemCompany" parameterType="ItemCompany">
+        update item_company
+        <trim prefix="SET" suffixOverrides=","><!--~--><!--~columnBegin_update-->
+            <if test="deptId != null ">dept_id = #{deptId},</if><!--~dept_id_update-->
+            <if test="companyName != null  and companyName != ''">company_name = #{companyName},</if><!--~company_name_update-->
+            <if test="contact != null  and contact != ''">contact = #{contact},</if><!--~contact_update-->
+            <if test="phonenumber != null  and phonenumber != ''">phonenumber = #{phonenumber},</if><!--~phonenumber_update-->
+            <if test="email != null  and email != ''">email = #{email},</if><!--~email_update-->
+            <if test="province != null  and province != ''">province = #{province},</if><!--~province_update-->
+            <if test="city != null  and city != ''">city = #{city},</if><!--~city_update-->
+            <if test="region != null  and region != ''">region = #{region},</if><!--~region_update-->
+            <if test="fullAddress != null  and fullAddress != ''">full_address = #{fullAddress},</if><!--~full_address_update-->
+            <if test="taxpayerNumber != null  and taxpayerNumber != ''">taxpayer_number = #{taxpayerNumber},</if><!--~taxpayer_number_update-->
+            <if test="creditCode != null  and creditCode != ''">credit_code = #{creditCode},</if><!--~credit_code_update-->
+            <if test="registeredCapital != null  and registeredCapital != ''">registered_capital = #{registeredCapital},</if><!--~registered_capital_update-->
+            <if test="unittype != null  and unittype != ''">unittype = #{unittype},</if><!--~unittype_update-->
+            <if test="bankCode != null  and bankCode != ''">bank_code = #{bankCode},</if><!--~bank_code_update-->
+            <if test="subbranch != null  and subbranch != ''">subbranch = #{subbranch},</if><!--~subbranch_update-->
+            <if test="bankNumber != null  and bankNumber != ''">bank_number = #{bankNumber},</if><!--~bank_number_update-->
+        </trim>
+        where company_id = #{companyId}
+    </update>
+
+    <delete id="deleteItemCompanyById" parameterType="Long">
+        delete from item_company where company_id = #{companyId}
+    </delete>
+
+    <delete id="deleteItemCompanyByIds" parameterType="String">
+        delete from item_company where company_id in
+        <foreach item="companyId" collection="array" open="(" separator="," close=")">
+            #{companyId}
+        </foreach>
+    </delete>
+    
+</mapper>

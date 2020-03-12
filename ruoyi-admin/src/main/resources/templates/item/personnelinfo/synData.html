@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('设备信息列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 组织机构
+            </div>
+            <div class="box-tools pull-right">
+                <a type="button" class="btn btn-box-tool" href="#" onclick="dept()" title="组织机构"><i class="fa fa-edit"></i></a>
+                <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新组织机构"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+
+<div class="ui-layout-center">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <input type="hidden" id="deptId" name="deptId">
+                    <input type="hidden" id="personnelId" name="personnelId" th:value="*{personnelId}">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>设备名称：</p>
+                                <input type="text" name="deviceName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+     </div>
+
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: layout-latest-js" />
+    <th:block th:include="include :: ztree-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('item:deviceinfo:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('item:deviceinfo:remove')}]];
+        var deviceCategoryDatas = [[${@dict.getType('item_face_device_category')}]];
+        var channelTypeDatas = [[${@dict.getType('item_face_device_channel_type')}]];
+        var openingModeDatas = [[${@dict.getType('item_face_device_opening_mode')}]];
+        var onlineStateDatas = [[${@dict.getType('sys_online_state')}]];
+        var prefix = ctx + "item/deviceinfo";
+
+        $(function() {
+            var panehHidden = false;
+            if ($(this).width() < 769) {
+                panehHidden = true;
+            }
+            $('body').layout({ initClosed: panehHidden, west__size: 185 });
+            queryUserList();
+            queryDeptTree();
+
+        });
+
+        function submitHandler() {
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+                //data.push({"personnelId":$("#personnelId").val()});
+                var data={"ids":$("#personnelId").val()+','+rows.join()};
+                $.operate.submit(ctx + "item/personnelinfo/synData", "post", "json", data);
+                //$.operate.save(prefix + "/synData", data);
+        }
+
+        function queryUserList() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "设备信息",
+            showFooter: false,
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'deviceId',
+                    title : '标识',
+                    visible: false
+                },
+                {
+                    field : 'deviceCategory',
+                    title : '设备类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(deviceCategoryDatas, value);
+                    }
+                },
+                {
+                    field : 'deviceName',
+                    title : '设备名称'
+                },
+                {
+                    field : 'ipAddress',
+                    title : 'IP地址'
+                },
+                {
+                    field : 'channelType',
+                    title : '通道类别',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(channelTypeDatas, value);
+                    }
+                },
+                {
+                    field : 'openingMode',
+                    title : '开闸模式',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(openingModeDatas, value);
+                    }
+                },
+                {
+                    field : 'onlineState',
+                    title : '在线状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(onlineStateDatas, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+        }
+
+        function queryDeptTree() {
+            var url = ctx + "system/dept/treeData/2?random="+$.common.random(1,100000);
+            var options = {
+                url: url,
+                expandLevel: 2,
+                onClick : zOnClick
+            };
+            $.tree.init(options);
+
+            function zOnClick(event, treeId, treeNode) {
+                $("#deptId").val(treeNode.id);
+                //$("#parentId").val(treeNode.pId);
+                $.table.search();
+            }
+        }
+
+        $('#btnExpand').click(function() {
+            $._tree.expandAll(true);
+            $(this).hide();
+            $('#btnCollapse').show();
+        });
+
+        $('#btnCollapse').click(function() {
+            $._tree.expandAll(false);
+            $(this).hide();
+            $('#btnExpand').show();
+        });
+
+        $('#btnRefresh').click(function() {
+            queryDeptTree();
+        });
+
+        /* 用户管理-部门 */
+        function dept() {
+            var url = ctx + "system/dept";
+            $.modal.openTab("机构管理", url);
+        }
+    </script>
+</body>
+</html>
